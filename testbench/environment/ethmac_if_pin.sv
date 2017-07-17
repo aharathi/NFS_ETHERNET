@@ -140,7 +140,8 @@ modport eth_mp(
 				);
 				
 		*/
-	modport wb_slave_mp(
+	modport wb_slave_mp
+	(
 		input	wb_clk_i,
 		input	wb_rst_i,
 		output	wb_dat_i,
@@ -154,6 +155,26 @@ modport eth_mp(
 		output  wb_cyc_i,     // WISHBONE cycle input
 		output  wb_stb_i,     // WISHBONE strobe input
 		input   wb_ack_o      // WISHBONE acknowledge output	
+		
+		
 	);
-
+		// WISHBONE Memory as slave	
+	modport wb_slave_mem
+	(
+		output	m_wb_dat_i,
+		output	m_wb_err_i,		
+		output  m_wb_ack_i,      // WISHBONE acknowledge output
+				
+		input	wb_clk_i,
+		input	wb_rst_i,
+		
+		input   m_wb_adr_o,     // WISHBONE address input
+		input   m_wb_sel_o,     // WISHBONE byte select input
+		input   m_wb_we_o,      // WISHBONE write enable input
+		input   m_wb_cyc_o,     // WISHBONE cycle input
+		input   m_wb_stb_o,     // WISHBONE strobe input		
+		input	m_wb_dat_o		// WISHBONE Data input
+		input   m_wb_cti_o,     // Cycle Type Identifier
+		input   m_wb_bte_o     // Burst Type Extension
+	);
 endinterface
