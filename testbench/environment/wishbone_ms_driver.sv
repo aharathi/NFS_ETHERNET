@@ -28,6 +28,8 @@ task read (output wb_sl_seq_s ms_rsp);
  
  @(posedge bus.wb_clk_i);  // To be in synchronous with the wishbone clock
  
+ // Observe the slave outputs
+ 
  ms_rsp.wb_dat_i = bus.wb_dat_o;
  ms_rsp.wb_dat_o = bus.wb_dat_i;
  ms_rsp.wb_err_o = bus.wb_err_o;
@@ -61,9 +63,9 @@ task write (input wb_sl_seq_s ms_req);
  
  //Observe the slave outputs
  
- bus.wb_dat_o = ms_req.wb_dat_i;
- bus.wb_err_o = ms_req.wb_err_o;
- bus.wb_ack_o = ms_req.wb_ack_o;
+ ms_req.wb_dat_i = bus.wb_dat_o;
+ ms_req.wb_err_o = bus.wb_err_o;
+ ms_req.wb_ack_o = bus.wb_ack_o;
 
 endtask
 
