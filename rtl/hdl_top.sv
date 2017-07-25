@@ -15,6 +15,19 @@ ethmac DUT_EMAC(ethmac_pif.eth_mp);
 //wb_driver_xif wb_drxif(ethmac_pif.wb_host_dr_mp); 
 wb_master_driver_if wb_ms_drif(ethmac_pif.wb_slave_mp);
 
+//slave BFM
+
+//slave BFM (monitor) 
+
+//RX BFM
+
+
+//TX BFM (monitor)
+
+
+
+
+
 //tbx clkgen
 initial begin 
 	clk = 0;
@@ -45,6 +58,19 @@ initial begin
 	rst = 1;
 	#90 rst = 0;
 end 
+
+
+//setting virtual interface 
+initial begin  //tbx vif_binding_block
+import uvm_pkg::*;
+
+
+//set diver BFM 
+uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif);
+
+
+end 
+
 
 endmodule 
 
