@@ -11,8 +11,7 @@ class wb_seq_item extends uvm_sequence_item;
 
 		// WISHBONE slave
 
-		//change into 32 bit variable 
-		rand logic    [31:0]  			  wb_adr_i;     // WISHBONE address input 
+		rand logic    [31:0]  			  wb_adr_i;     // WISHBONE address input  
 		logic    [`WB_SEL_WIDTH-1:0]  wb_sel_i;     // WISHBONE byte select input
 		logic           			  wb_we_i;      // WISHBONE write enable input
 		logic           			  wb_cyc_i;     // WISHBONE cycle input
@@ -32,8 +31,8 @@ endclass
 
 
 
-class eth_wb_trans extends wb_seq_item;
-`uvm_object_utils(eth_wb_trans)
+class eth_wb_req_trans extends wb_seq_item;
+`uvm_object_utils(eth_wb_req_trans)
 
 
 
@@ -43,9 +42,25 @@ constraint addr_wb {wb_adr_i inside [32'h0 : 32'h7fc]};
 
 
 
-extern function new (string name = "eth_wb_trans");
+extern function new (string name = "eth_wb_req_trans");
 extern virtual function void do_copy(uvm_object rhs);
 extern virtual function string convert2string();
 
 endclass 
 
+
+
+class wb_seq_item_converter;
+
+static function void from_class (input wb_seq_item wb_h,output wb_sl_seq_s wb_t);
+wb_t.wb_adr_i  =  wb_h.wb_adr_i;
+
+endfunction 
+
+static function void to_class (input wb_sl_seq_s wb_t, output wb_seq_item wb_h);
+
+wb_h = new();
+wb_h.wb_adr_i = wb_t.wb_adr_i;
+endfunction 
+
+endclass 
