@@ -34,7 +34,7 @@ task read (output wb_sl_seq_s ms_rsp);
  ms_rsp.wb_dat_o = bus.wb_dat_i;
  ms_rsp.wb_err_o = bus.wb_err_o;
  
- ms_rsp.wb_adr_i = bus.wb_adr_i;
+ ms_rsp.wb_adr_i = bus.wb_adr_i[11:2];
  ms_rsp.wb_sel_i = bus.wb_sel_i;
  ms_rsp.wb_we_i  = bus.wb_we_i;
  ms_rsp.wb_cyc_i = bus.wb_cyc_i;
@@ -55,7 +55,7 @@ task write (input wb_sl_seq_s ms_req);
  // Drive the inputs of the slave 
  
  bus.wb_dat_i = ms_req.wb_dat_o;
- bus.wb_adr_i = ms_req.wb_adr_i;
+ bus.wb_adr_i = ms_req.wb_adr_i[11:2];
  bus.wb_sel_i = ms_req.wb_sel_i;
  bus.wb_we_i  = ms_req.wb_we_i;
  bus.wb_cyc_i = ms_req.wb_cyc_i;
