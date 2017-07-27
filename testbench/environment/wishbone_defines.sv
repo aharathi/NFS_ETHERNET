@@ -7,3 +7,4 @@
 `define WB_DATA_TYPE [(`WB_DATA_WIDTH - 1):0]
 `define WB_SEL_TYPE  [(`WB_SEL_WIDTH  - 1):0]
 `define WB_TAG_TYPE  [(`WB_TAG_WIDTH  - 1):0]
+`define RESET_CYCLES 50

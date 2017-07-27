@@ -5,6 +5,8 @@
 	`include "wishbone_defines.sv"
 
 	package wb_struct_pkg;
+	
+	  typedef enum bit {READ = 1'b0, WRITE = 1'b1};
 
 	  typedef struct packed {
 		logic   [`WB_DATA_WIDTH-1:0]  wb_dat_i;     // WISHBONE data input

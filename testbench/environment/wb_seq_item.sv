@@ -12,7 +12,7 @@ class wb_seq_item extends uvm_sequence_item;
 		// WISHBONE slave
 
 		//change into 32 bit variable 
-		rand logic    [11:2]  			  wb_adr_i;     // WISHBONE address input 
+		rand logic    [31:0]  			  wb_adr_i;     // WISHBONE address input 
 		logic    [`WB_SEL_WIDTH-1:0]  wb_sel_i;     // WISHBONE byte select input
 		logic           			  wb_we_i;      // WISHBONE write enable input
 		logic           			  wb_cyc_i;     // WISHBONE cycle input
