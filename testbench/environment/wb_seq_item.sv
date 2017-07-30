@@ -13,7 +13,8 @@ class wb_seq_item extends uvm_sequence_item;
 
 		rand logic    [31:0]  			  wb_adr_i;     // WISHBONE address input  
 		logic    [`WB_SEL_WIDTH-1:0]  wb_sel_i;     // WISHBONE byte select input
-		logic           			  wb_we_i;      // WISHBONE write enable input
+		//logic           			  wb_we_i;      // WISHBONE write enable input
+		r_w_t					  wb_we_i;
 		logic           			  wb_cyc_i;     // WISHBONE cycle input
 		logic           			  wb_stb_i;     // WISHBONE strobe input
 		logic           			  wb_ack_o;     // WISHBONE acknowledge output
