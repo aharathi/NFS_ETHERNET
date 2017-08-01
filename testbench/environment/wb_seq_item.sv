@@ -66,6 +66,32 @@ virtual function string eth_wb_req_trans::convert2string();
 
 endfunction
 
+//
+// Overriding do_copy method of UVM to do a deep copy
+//
+
+virtual function void eth_wb_req_trans::do_copy(uvm_object rhs);
+
+ wb_seq_item rhs_;
+ 
+ if(!$cast(rhs_,rhs))begin
+   uvm_report_error("do_copy:", "cast failed");
+   return;
+ end
+ 
+ super.do_copy(rhs); // Chaining the copy with parent class
+ 
+ wb_dat_i = rhs_.wb_dat_i;
+ wb_dat_o = rhs_.wb_dat_o;
+ wb_err_o = rhs_.wb_err_o;
+ wb_adr_i = rhs_.wb_adr_i;
+ wb_sel_i = rhs_.wb_sel_i;
+ wb_we_i  = rhs_.wb_we_i;
+ wb_cyc_i = rhs_.wb_cyc_i;
+ wb_stb_i = rhs_.wb_stb_i;
+ wb_ack_o = rhs_.wb_ack_o;
+
+endfunction: do_copy 
 
 class wb_seq_item_converter;
 
