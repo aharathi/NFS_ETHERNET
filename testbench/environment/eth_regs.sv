@@ -13,8 +13,12 @@ function void configure(uvm_reg        parent,    // The containing register
                         bit            is_rand,   // Whether the bit can be randomized
                         bit            individually_accessible); // i.e. Totally contained within a byte lane
 */
+`include "wishbone_package.sv"
 
-import wb_struct_pkg::*;
+`include "../uvm_register-2.0/src/uvm_register_pkg.sv"
+	  
+import uvm_pkg::*;
+import uvm_register_pkg::*;
 
 //MODER Register definition
 
@@ -112,15 +116,15 @@ endclass
 class miimoder extends uvm_reg;
 `uvm_object_utils(miimoder);
 
-rand uvm_field RESERVED;
-rand uvm_field MIINOPRE;
-rand uvm_field CLKDIV;
+rand uvm_reg_field RESERVED;
+rand uvm_reg_field MIINOPRE;
+rand uvm_reg_field CLKDIV;
 
 function new(string name = "MIIMODER");
 	super.new(name,32,UVM_NO_COVERAGE);
 endfunction
 
-virtual function void build()
+virtual function void build();
 RESERVED	= uvm_reg_field::type_id::create("RESERVED");
 MIINOPRE	= uvm_reg_field::type_id::create("MIINOPRE");
 CLKDIV		= uvm_reg_field::type_id::create("CLKDIV");
@@ -136,16 +140,16 @@ endclass
 class miistatus extends uvm_reg;
 `uvm_object_utils(miistatus);
 
-rand uvm_field RESERVED;
-rand uvm_field NVALID;
-rand uvm_field BUSY;
-rand uvm_field LINKFAIL;
+rand uvm_reg_field RESERVED;
+rand uvm_reg_field NVALID;
+rand uvm_reg_field BUSY;
+rand uvm_reg_field LINKFAIL;
 
 function new(string name = "MIISTATUS");
 	super.new(name,32,UVM_NO_COVERAGE);
 endfunction
 
-virtual function void build()
+virtual function void build();
 RESERVED	= uvm_reg_field::type_id::create("RESERVED");
 NVALID		= uvm_reg_field::type_id::create("NVALID");
 BUSY		= uvm_reg_field::type_id::create("BUSY");
@@ -195,9 +199,9 @@ miistatus_reg.build();
 ETH_map = create_map("ETH_map",'h0,4,UVM_LITTLE_ENDIAN);
 
 ETH_map.add_reg(moder_reg,32'h00000000,"RW");
-ETH_map.add_reg(tx_bd_num_reg,32'h00000004,"RW");
-ETH_map.add_reg(miimoder_reg,32'h00000008,"RW");
-ETH_map.add_reg(miistatus_reg,32'h0000000C,"RW");
+ETH_map.add_reg(tx_bd_num_reg,32'h00000020,"RW");
+ETH_map.add_reg(miimoder_reg,32'h00000028,"RW");
+ETH_map.add_reg(miistatus_reg,32'h0000003C,"RW");
 
 lock_model();
 endfunction
@@ -219,7 +223,7 @@ virtual function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op reg_params);
 wb_seq_item wb_signal = wb_seq_item::type_id::create("wb_signal");
 wb_signal.wb_dat_i = reg_params.addr;
 wb_signal.wb_adr_i = reg_params.data;
-wb_signal.wb_we_i  = (reg_params.kind == UVM_WRITE)?r_w_t.WRITE:((reg_params.kind == UVM_READ)? r_w_t.READ:0);
+wb_signal.wb_we_i  = (reg_params.kind == UVM_WRITE)?WRITE:READ;
 return wb_signal;
 endfunction
 

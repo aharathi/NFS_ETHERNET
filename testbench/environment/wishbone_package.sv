@@ -45,6 +45,9 @@
 	  } wb_ms_seq_s;
 
 	  import wb_struct_pkg::*;
+	  
+	  import questa_uvm_pkg::*;
+	  
 	 // parameter int APB_SEQ_ITEM_NUM_BITS  = $bits(apb_seq_item_s);
 	 // parameter int APB_SEQ_ITEM_NUM_BYTES = (APB_SEQ_ITEM_NUM_BITS+7)/8;
 
