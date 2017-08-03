@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////
-////   r_Iam                                                           ////
+////    r_Iam                                                          ////
 ////  ethmac.v                                                    ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
@@ -242,7 +242,7 @@
 `include "timescale.v"
 
 
-module ethmac
+module eth_top
 (
   // WISHBONE common
   wb_clk_i, wb_rst_i, wb_dat_i, wb_dat_o, 
@@ -255,7 +255,9 @@ module ethmac
   m_wb_dat_o, m_wb_dat_i, m_wb_cyc_o, 
   m_wb_stb_o, m_wb_ack_i, m_wb_err_i, 
 
+`ifdef ETH_WISHBONE_B3
   m_wb_cti_o, m_wb_bte_o, 
+`endif
 
   //TX
   mtx_clk_pad_i, mtxd_pad_o, mtxen_pad_o, mtxerr_pad_o,
@@ -316,8 +318,10 @@ input           m_wb_err_i;
 
 wire    [29:0]  m_wb_adr_tmp;
 
-output   [2:0]  m_wb_cti_o;   // Cycle Type Identifier
-output   [1:0]  m_wb_bte_o;   // Burst Type Extension
+//`ifdef ETH_WISHBONE_B3
+//output   [2:0]  m_wb_cti_o;   // Cycle Type Identifier
+//output   [1:0]  m_wb_bte_o;   // Burst Type Extension
+//`endif
 
 // Tx
 input           mtx_clk_pad_i; // Transmit clock (from PHY)
@@ -388,7 +392,15 @@ reg             TxPauseRq_sync2;
 reg             TxPauseRq_sync3;
 reg             TPauseRq;
 
-
+initial
+begin
+  $display("          *********************************************");
+  $display("          =============================================");
+  $display("          eth_top.v will be removed shortly.");
+  $display("          Please use ethmac.v as top level file instead");
+  $display("          =============================================");
+  $display("          *********************************************");
+end
 // Connecting Miim module
 eth_miim miim1
 (
@@ -565,6 +577,7 @@ assign temp_wb_err_o = wb_stb_i & wb_cyc_i & (~ByteSelected | CsMiss);
 
 
 // Connecting Ethernet registers
+/*
 eth_registers ethreg1
 (
   .DataIn(wb_dat_i),
@@ -637,7 +650,7 @@ eth_registers ethreg1
   
 );
 
-
+*/
 
 wire  [7:0] RxData;
 wire        RxValid;
@@ -663,7 +676,6 @@ wire        MaxCollisionOccured;
 wire        RetryLimit;   
 wire        StatePreamble;   
 wire  [1:0] StateData; 
-
 
 // Connecting MACControl
 eth_maccontrol maccontrol1
@@ -1045,8 +1057,10 @@ wishbone
   .m_wb_ack_i(m_wb_ack_i),
   .m_wb_err_i(m_wb_err_i),
   
+//`ifdef ETH_WISHBONE_B3
   .m_wb_cti_o(m_wb_cti_o),
   .m_wb_bte_o(m_wb_bte_o), 
+//`endif
 
     //TX
   .MTxClk(mtx_clk_pad_i),
