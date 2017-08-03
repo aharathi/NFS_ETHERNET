@@ -31,7 +31,9 @@ function eth_base_test::build_phase(uvm_phase phase);
 
 env_cfg = eth_env_config::type_id::create("env_cfg");
 
-eth_reg_m = new ("eth_reg_map",null);
+eth_reg_m = eth_reg_block::type_id::create("eth_reg_m");
+
+eth_reg_m.build();
 
 env_cfg.eth_rm = eth_reg_m;
 
