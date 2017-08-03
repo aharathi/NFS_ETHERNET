@@ -65,7 +65,7 @@ initial begin  //tbx vif_binding_block
 import uvm_pkg::*;
 
 
-//set diver BFM 
+//set diver BFM //%m = hdl_top 
 uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif);
 
 
