@@ -22,10 +22,10 @@ end
 // waiting for clock cycles
 //
 
-task wait_for_clkcyc(); //pragma tbx xtf
+task wait_for_clkcyc(int n=0); //pragma tbx xtf
 
- repeat(`RESET_CYCLES)@(posedge bus.wb_clk_i);
- 
+ if (n == 0) repeat(`RESET_CYCLES)@(posedge bus.wb_clk_i);
+ else repeat(n) @(posedge bus.wb_clk_i);
 endtask
 
 //

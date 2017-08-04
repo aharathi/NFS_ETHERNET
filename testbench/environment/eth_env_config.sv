@@ -17,18 +17,20 @@ wb_agent_config m_wb_agent_cfg;
 
 eth_reg_block eth_rm;
 
+virtual wb_master_driver_if DELAY_IF;
+
 extern task wait_for_interrupt;
 extern function bit is_interrupt_cleared;
-extern task pound_delay(int n);
+extern task pound_delay(int n=0);
 
 function new (string name = m_name);
 super.new(name);
 endfunction
-
 endclass 
 
-
-
+task eth_env_config::pound_delay (int n=0);
+DELAY_IF.wait_for_clkcyc(n);
+endtask
 
 
 `endif 

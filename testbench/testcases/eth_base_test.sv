@@ -25,6 +25,8 @@ extern function void configure_wb_agent(wb_agent_config cfg);
 
 extern function void build_phase(uvm_phase phase);
 
+extern function void wait_n_clks(int n=0);
+
 endclass
 
 function eth_base_test::build_phase(uvm_phase phase);
@@ -35,6 +37,8 @@ eth_reg_m = eth_reg_block::type_id::create("eth_reg_m");
 
 eth_reg_m.build();
 
+uvm_config_db #(eth_reg_block)::set(this,"*","eth_reg_block",eth_reg_m);
+
 env_cfg.eth_rm = eth_reg_m;
 
 wb_agent_cfg = wb_agent_config::type_id::create("wb_agent_cfg");
@@ -42,6 +46,7 @@ wb_agent_cfg = wb_agent_config::type_id::create("wb_agent_cfg");
 configure_wb_agent(wb_agent_cfg);
 
 `assert(uvm_config_db #(virtual wb_master_driver_if)::get(this,"","hdl_top.WB_DRIVER",wb_agent_cfg.WB_BFM)) `uvm_error (m_name,"build_phase did not find the driver interface")
+`assert(uvm_config_db #(virtual wb_master_driver_if)::get(this,"","hdl_top.WB_DRIVER",env_cfg.DELAY_IF)) `uvm_error (m_name,"build_phase did not find the driver interface")
 
 env_cfg.m_wb_agent_cfg = wb_agent_cfg;
 
@@ -58,4 +63,9 @@ cfg.active = UVM_ACTIVE;
 cfg.has_functional_coverage = 0;
 cfg.has_scoreboard = 0;
 endfunction  
+
+function void eth_base_test::wait_n_clks(int n = 0);
+env_cfg.pound_delay(n);
+endfunction 
+
 `endif 
