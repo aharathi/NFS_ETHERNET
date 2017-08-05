@@ -1,7 +1,3 @@
-import uvm_pkg::*;
-`include "uvm_macros.svh"
-
-
 `ifndef ETH_REG_SEQ
 `define ETH_REG_SEQ
 class eth_reg_seq extends uvm_sequence#(uvm_sequence_item);
