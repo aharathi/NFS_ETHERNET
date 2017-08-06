@@ -1,7 +1,7 @@
 `infdef WB_DRIVER
 `define WB_DRIVER
 
-`include "wishbone_package.sv"
+//`include "wishbone_package.sv"
 
 class wb_driver extends uvm_driver #(wb_seq_item);
 `uvm_component_utils(wb_driver)

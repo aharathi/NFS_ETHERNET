@@ -1,7 +1,6 @@
 `ifndef WB_SEQ_ITEM
 `define WB_SEQ_ITEM
 
-
 class wb_seq_item extends uvm_sequence_item;
 `uvm_object_utils(wb_seq_item)
 
@@ -53,7 +52,7 @@ endclass
 // Used for printing the class fields of sequence item
 //
 
-virtual function string eth_wb_req_trans::convert2string();
+function string eth_wb_req_trans::convert2string();
 
  string cls_snpsht;
  cls_snpsht = $sformatf("\n\n****************************************************************************\n\
@@ -74,7 +73,7 @@ endfunction
 // Overriding do_copy method of UVM to do a deep copy
 //
 
-virtual function void eth_wb_req_trans::do_copy(uvm_object rhs);
+function void eth_wb_req_trans::do_copy(uvm_object rhs);
 
  wb_seq_item rhs_;
  
