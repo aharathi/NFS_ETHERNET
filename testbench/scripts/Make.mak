@@ -5,8 +5,8 @@ UVM: $(QUESTA_HOME)/verilog_src/uvm-1.1d
 all: work build run
 
 work:
-	vlib work.$(MODE)
-	vmap work work.$(MODE)
+	vellib work.$(MODE)
+	velmap work work.$(MODE)
 	
 build:
 	vlog -f tb_files.f
