@@ -16,7 +16,9 @@ class wb_seq_item extends uvm_sequence_item;
 		logic           			  		wb_ack_o;     	// WISHBONE acknowledge output
 
 
-extern function new(string name = "wb_seq_item");
+function new(string name = "wb_seq_item");
+super.new(name);
+endfunction 
 extern virtual function void do_copy(uvm_object rhs);
 extern virtual function string convert2string();
 
@@ -39,7 +41,9 @@ constraint addr_wb {wb_adr_i inside [32'h0 : 32'h7fc]};
 
 
 
-extern function new (string name = "eth_wb_req_trans");
+function new (string name = "eth_wb_req_trans");
+super.new(name);
+endfunction 
 extern virtual function void do_copy(uvm_object rhs);
 extern virtual function string convert2string();
 

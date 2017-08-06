@@ -4,9 +4,9 @@
 package eth_env_pkg;
 `include "wishbone_defines.sv"
 `include "uvm_macros.svh"
-`include "tb_eth_define.sv"
-//import uvm_pkg::*;
-import questa_uvm_pkg::*;
+`include "tb_eth_defines.sv"
+import uvm_pkg::*;
+//import questa_uvm_pkg::*;
 import wb_struct_pkg::*;
 import eth_reg_pkg::*;
 
