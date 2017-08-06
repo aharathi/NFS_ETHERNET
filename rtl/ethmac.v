@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////
-////   r_Iam                                                           ////
+////                                                              ////
 ////  ethmac.v                                                    ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
@@ -242,9 +242,10 @@
 `include "timescale.v"
 
 
-module ethmac
-(
-  // WISHBONE common
+module ethmac (ethmac_if_pins ifpins);
+/*
+(	
+// WISHBONE common
   wb_clk_i, wb_rst_i, wb_dat_i, wb_dat_o, 
 
   // WISHBONE slave
@@ -278,7 +279,7 @@ module ethmac
 `endif
 
 );
-
+*/
 
 parameter TX_FIFO_DATA_WIDTH = `ETH_TX_FIFO_DATA_WIDTH;
 parameter TX_FIFO_DEPTH      = `ETH_TX_FIFO_DEPTH;
@@ -287,7 +288,7 @@ parameter RX_FIFO_DATA_WIDTH = `ETH_RX_FIFO_DATA_WIDTH;
 parameter RX_FIFO_DEPTH      = `ETH_RX_FIFO_DEPTH;
 parameter RX_FIFO_CNT_WIDTH  = `ETH_RX_FIFO_CNT_WIDTH;
 
-
+/*
 // WISHBONE common
 input           wb_clk_i;     // WISHBONE clock
 input           wb_rst_i;     // WISHBONE reset
@@ -314,7 +315,6 @@ output          m_wb_stb_o;
 input           m_wb_ack_i;
 input           m_wb_err_i;
 
-wire    [29:0]  m_wb_adr_tmp;
 
 output   [2:0]  m_wb_cti_o;   // Cycle Type Identifier
 output   [1:0]  m_wb_bte_o;   // Burst Type Extension
@@ -349,7 +349,8 @@ input   mbist_si_i;       // bist scan serial in
 output  mbist_so_o;       // bist scan serial out
 input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i;       // bist chain shift control
 `endif
-
+*/
+wire    [29:0]  m_wb_adr_tmp;
 wire    [31:0]  wb_dbg_dat0;
 
 wire     [7:0]  r_ClkDiv;
@@ -392,8 +393,8 @@ reg             TPauseRq;
 // Connecting Miim module
 eth_miim miim1
 (
-  .Clk(wb_clk_i),
-  .Reset(wb_rst_i),
+  .Clk(ifpins.wb_clk_i),
+  .Reset(ifpins.wb_rst_i),
   .Divider(r_ClkDiv),
   .NoPre(r_MiiNoPre),
   .CtrlData(r_CtrlData),
@@ -402,10 +403,10 @@ eth_miim miim1
   .WCtrlData(r_WCtrlData),
   .RStat(r_RStat),
   .ScanStat(r_ScanStat),
-  .Mdi(md_pad_i),
-  .Mdo(md_pad_o),
-  .MdoEn(md_padoe_o),
-  .Mdc(mdc_pad_o),
+  .Mdi(ifpins.md_pad_i),
+  .Mdo(ifpins.md_pad_o),
+  .MdoEn(ifpins.md_padoe_o),
+  .Mdc(ifpins.mdc_pad_o),
   .Busy(Busy_stat),
   .Prsd(Prsd),
   .LinkFail(LinkFail),
@@ -511,27 +512,27 @@ wire        temp_wb_err_o;
 `endif
 
 //assign DWord = &wb_sel_i;
-assign ByteSelected = |wb_sel_i;
-assign RegCs[3] = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] & ~wb_adr_i[10] & wb_sel_i[3];   // 0x0   - 0x3FF
-assign RegCs[2] = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] & ~wb_adr_i[10] & wb_sel_i[2];   // 0x0   - 0x3FF
-assign RegCs[1] = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] & ~wb_adr_i[10] & wb_sel_i[1];   // 0x0   - 0x3FF
-assign RegCs[0] = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] & ~wb_adr_i[10] & wb_sel_i[0];   // 0x0   - 0x3FF
-assign BDCs[3]  = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] &  wb_adr_i[10] & wb_sel_i[3];   // 0x400 - 0x7FF
-assign BDCs[2]  = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] &  wb_adr_i[10] & wb_sel_i[2];   // 0x400 - 0x7FF
-assign BDCs[1]  = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] &  wb_adr_i[10] & wb_sel_i[1];   // 0x400 - 0x7FF
-assign BDCs[0]  = wb_stb_i & wb_cyc_i & ByteSelected & ~wb_adr_i[11] &  wb_adr_i[10] & wb_sel_i[0];   // 0x400 - 0x7FF
-assign CsMiss = wb_stb_i & wb_cyc_i & ByteSelected & wb_adr_i[11];                   // 0x800 - 0xfFF
-assign temp_wb_dat_o = ((|RegCs) & ~wb_we_i)? RegDataOut : BD_WB_DAT_O;
-assign temp_wb_err_o = wb_stb_i & wb_cyc_i & (~ByteSelected | CsMiss);
+assign ByteSelected = |ifpins.wb_sel_i;
+assign RegCs[3] = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] & ~ifpins.wb_adr_i[10] & ifpins.wb_sel_i[3];   // 0x0   - 0x3FF
+assign RegCs[2] = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] & ~ifpins.wb_adr_i[10] & ifpins.wb_sel_i[2];   // 0x0   - 0x3FF
+assign RegCs[1] = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] & ~ifpins.wb_adr_i[10] & ifpins.wb_sel_i[1];   // 0x0   - 0x3FF
+assign RegCs[0] = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] & ~ifpins.wb_adr_i[10] & ifpins.wb_sel_i[0];   // 0x0   - 0x3FF
+assign BDCs[3]  = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] &  ifpins.wb_adr_i[10] & ifpins.wb_sel_i[3];   // 0x400 - 0x7FF
+assign BDCs[2]  = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] &  ifpins.wb_adr_i[10] & ifpins.wb_sel_i[2];   // 0x400 - 0x7FF
+assign BDCs[1]  = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] &  ifpins.wb_adr_i[10] & ifpins.wb_sel_i[1];   // 0x400 - 0x7FF
+assign BDCs[0]  = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ~ifpins.wb_adr_i[11] &  ifpins.wb_adr_i[10] & ifpins.wb_sel_i[0];   // 0x400 - 0x7FF
+assign CsMiss = ifpins.wb_stb_i & ifpins.wb_cyc_i & ByteSelected & ifpins.wb_adr_i[11];                   // 0x800 - 0xfFF
+assign temp_wb_dat_o = ((|RegCs) & ~ifpins.wb_we_i)? RegDataOut : BD_WB_DAT_O;
+assign temp_wb_err_o = ifpins.wb_stb_i & ifpins.wb_cyc_i & (~ByteSelected | CsMiss);
 
 `ifdef ETH_REGISTERED_OUTPUTS
-  assign wb_ack_o = temp_wb_ack_o_reg;
-  assign wb_dat_o[31:0] = temp_wb_dat_o_reg;
-  assign wb_err_o = temp_wb_err_o_reg;
+  assign ifpins.wb_ack_o = temp_wb_ack_o_reg;
+  assign ifpins.wb_dat_o[31:0] = temp_wb_dat_o_reg;
+  assign ifpins.wb_err_o = temp_wb_err_o_reg;
 `else
-  assign wb_ack_o = temp_wb_ack_o;
-  assign wb_dat_o[31:0] = temp_wb_dat_o;
-  assign wb_err_o = temp_wb_err_o;
+  assign ifpins.wb_ack_o = temp_wb_ack_o;
+  assign ifpins.wb_dat_o[31:0] = temp_wb_dat_o;
+  assign ifpins.wb_err_o = temp_wb_err_o;
 `endif
 
 `ifdef ETH_AVALON_BUS
@@ -546,9 +547,9 @@ assign temp_wb_err_o = wb_stb_i & wb_cyc_i & (~ByteSelected | CsMiss);
 `endif
 
 `ifdef ETH_REGISTERED_OUTPUTS
-  always @ (posedge wb_clk_i or posedge wb_rst_i)
+  always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
   begin
-    if(wb_rst_i)
+    if(ifpins.wb_rst_i)
       begin
         temp_wb_ack_o_reg <= 1'b0;
         temp_wb_dat_o_reg <= 32'h0;
@@ -567,12 +568,12 @@ assign temp_wb_err_o = wb_stb_i & wb_cyc_i & (~ByteSelected | CsMiss);
 // Connecting Ethernet registers
 eth_registers ethreg1
 (
-  .DataIn(wb_dat_i),
-  .Address(wb_adr_i[9:2]),
-  .Rw(wb_we_i),
+  .DataIn(ifpins.wb_dat_i),
+  .Address(ifpins.wb_adr_i[9:2]),
+  .Rw(ifpins.wb_we_i),
   .Cs(RegCs),
-  .Clk(wb_clk_i),
-  .Reset(wb_rst_i),
+  .Clk(ifpins.wb_clk_i),
+  .Reset(ifpins.wb_rst_i),
   .DataOut(RegDataOut),
   .r_RecSmall(r_RecSmall),
   .r_Pad(r_Pad),
@@ -622,7 +623,7 @@ eth_registers ethreg1
   .UpdateMIIRX_DATAReg(UpdateMIIRX_DATAReg),
   .Prsd(Prsd),
   .r_TxBDNum(r_TxBDNum),
-  .int_o(int_o),
+  .int_o(ifpins.int_o),
   .r_HASH0(r_HASH0),
   .r_HASH1(r_HASH1),
   .r_TxPauseRq(r_TxPauseRq),
@@ -630,8 +631,8 @@ eth_registers ethreg1
   .RstTxPauseRq(RstTxPauseRq),
   .TxCtrlEndFrm(TxCtrlEndFrm),
   .StartTxDone(StartTxDone),
-  .TxClk(mtx_clk_pad_i),
-  .RxClk(mrx_clk_pad_i),
+  .TxClk(ifpins.mtx_clk_pad_i),
+  .RxClk(ifpins.mrx_clk_pad_i),
   .dbg_dat(wb_dbg_dat0),
   .SetPauseTimer(SetPauseTimer)
   
@@ -664,11 +665,10 @@ wire        RetryLimit;
 wire        StatePreamble;   
 wire  [1:0] StateData; 
 
-
 // Connecting MACControl
 eth_maccontrol maccontrol1
 (
-  .MTxClk(mtx_clk_pad_i),
+  .MTxClk(ifpins.mtx_clk_pad_i),
   .TPauseRq(TPauseRq),
   .TxPauseTV(r_TxPauseTV),
   .TxDataIn(TxData),
@@ -677,7 +677,7 @@ eth_maccontrol maccontrol1
   .TxUsedDataIn(TxUsedDataIn),
   .TxDoneIn(TxDoneIn),
   .TxAbortIn(TxAbortIn),
-  .MRxClk(mrx_clk_pad_i),
+  .MRxClk(ifpins.mrx_clk_pad_i),
   .RxData(RxData),
   .RxValid(RxValid),
   .RxStartFrm(RxStartFrm),
@@ -692,8 +692,8 @@ eth_maccontrol maccontrol1
   .PadOut(PadOut),
   .CrcEnIn(r_CrcEn | PerPacketCrcEn),
   .CrcEnOut(CrcEnOut),
-  .TxReset(wb_rst_i),
-  .RxReset(wb_rst_i),
+  .TxReset(ifpins.wb_rst_i),
+  .RxReset(ifpins.wb_rst_i),
   .ReceivedLengthOK(ReceivedLengthOK),
   .TxDataOut(TxDataOut),
   .TxStartFrmOut(TxStartFrmOut),
@@ -727,21 +727,21 @@ reg WillTransmit_q2;
 
 
 // Muxed MII receive data valid
-assign MRxDV_Lb = r_LoopBck? mtxen_pad_o : mrxdv_pad_i & RxEnSync;
+assign MRxDV_Lb = r_LoopBck? ifpins.mtxen_pad_o : ifpins.mrxdv_pad_i & RxEnSync;
 
 // Muxed MII Receive Error
-assign MRxErr_Lb = r_LoopBck? mtxerr_pad_o : mrxerr_pad_i & RxEnSync;
+assign MRxErr_Lb = r_LoopBck? ifpins.mtxerr_pad_o : ifpins.mrxerr_pad_i & RxEnSync;
 
 // Muxed MII Receive Data
-assign MRxD_Lb[3:0] = r_LoopBck? mtxd_pad_o[3:0] : mrxd_pad_i[3:0];
+assign MRxD_Lb[3:0] = r_LoopBck? ifpins.mtxd_pad_o[3:0] : ifpins.mrxd_pad_i[3:0];
 
 
 
 // Connecting TxEthMAC
 eth_txethmac txethmac1
 (
-  .MTxClk(mtx_clk_pad_i),
-  .Reset(wb_rst_i),
+  .MTxClk(ifpins.mtx_clk_pad_i),
+  .Reset(ifpins.wb_rst_i),
   .CarrierSense(TxCarrierSense),
   .Collision(Collision),
   .TxData(TxDataOut),
@@ -762,9 +762,9 @@ eth_txethmac txethmac1
   .NoBckof(r_NoBckof),
   .ExDfrEn(r_ExDfrEn),
   .MaxFL(r_MaxFL),
-  .MTxEn(mtxen_pad_o),
-  .MTxD(mtxd_pad_o),
-  .MTxErr(mtxerr_pad_o),
+  .MTxEn(ifpins.mtxen_pad_o),
+  .MTxD(ifpins.mtxd_pad_o),
+  .MTxErr(ifpins.mtxerr_pad_o),
   .TxUsedData(TxUsedDataIn),
   .TxDone(TxDoneIn),
   .TxRetry(TxRetry),
@@ -800,7 +800,7 @@ wire          AddressMiss;
 // Connecting RxEthMAC
 eth_rxethmac rxethmac1
 (
-  .MRxClk(mrx_clk_pad_i),
+  .MRxClk(ifpins.mrx_clk_pad_i),
   .MRxDV(MRxDV_Lb),
   .MRxD(MRxD_Lb),
   .Transmitting(Transmitting),
@@ -808,7 +808,7 @@ eth_rxethmac rxethmac1
   .DlyCrcEn(r_DlyCrcEn),
   .MaxFL(r_MaxFL),
   .r_IFG(r_IFG),
-  .Reset(wb_rst_i),
+  .Reset(ifpins.wb_rst_i),
   .RxData(RxData),
   .RxValid(RxValid),
   .RxStartFrm(RxStartFrm),
@@ -835,16 +835,16 @@ eth_rxethmac rxethmac1
 
 
 // MII Carrier Sense Synchronization
-always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
+always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     begin
       CarrierSense_Tx1 <=  1'b0;
       CarrierSense_Tx2 <=  1'b0;
     end
   else
     begin
-      CarrierSense_Tx1 <=  mcrs_pad_i;
+      CarrierSense_Tx1 <=  ifpins.mcrs_pad_i;
       CarrierSense_Tx2 <=  CarrierSense_Tx1;
     end
 end
@@ -853,16 +853,16 @@ assign TxCarrierSense = ~r_FullD & CarrierSense_Tx2;
 
 
 // MII Collision Synchronization
-always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
+always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     begin
       Collision_Tx1 <=  1'b0;
       Collision_Tx2 <=  1'b0;
     end
   else
     begin
-      Collision_Tx1 <=  mcoll_pad_i;
+      Collision_Tx1 <=  ifpins.mcoll_pad_i;
       if(ResetCollision)
         Collision_Tx2 <=  1'b0;
       else
@@ -878,7 +878,7 @@ assign Collision = ~r_FullD & Collision_Tx2;
 
 
 // Delayed WillTransmit
-always @ (posedge mrx_clk_pad_i)
+always @ (posedge ifpins.mrx_clk_pad_i)
 begin
   WillTransmit_q <=  WillTransmit;
   WillTransmit_q2 <=  WillTransmit_q;
@@ -890,45 +890,45 @@ assign Transmitting = ~r_FullD & WillTransmit_q2;
 
 
 // Synchronized Receive Enable
-always @ (posedge mrx_clk_pad_i or posedge wb_rst_i)
+always @ (posedge ifpins.mrx_clk_pad_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     RxEnSync <=  1'b0;
   else
-  if(~mrxdv_pad_i)
+  if(~ifpins.mrxdv_pad_i)
     RxEnSync <=  r_RxEn;
 end 
 
 
 
 // Synchronizing WillSendControlFrame to WB_CLK;
-always @ (posedge wb_clk_i or posedge wb_rst_i)
+always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     WillSendControlFrame_sync1 <= 1'b0;
   else
     WillSendControlFrame_sync1 <= WillSendControlFrame;
 end
 
-always @ (posedge wb_clk_i or posedge wb_rst_i)
+always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     WillSendControlFrame_sync2 <= 1'b0;
   else
     WillSendControlFrame_sync2 <= WillSendControlFrame_sync1;
 end
 
-always @ (posedge wb_clk_i or posedge wb_rst_i)
+always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     WillSendControlFrame_sync3 <= 1'b0;
   else
     WillSendControlFrame_sync3 <= WillSendControlFrame_sync2;
 end
 
-always @ (posedge wb_clk_i or posedge wb_rst_i)
+always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     RstTxPauseRq <= 1'b0;
   else
     RstTxPauseRq <= WillSendControlFrame_sync2 & ~WillSendControlFrame_sync3;
@@ -938,9 +938,9 @@ end
 
 
 // TX Pause request Synchronization
-always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
+always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     begin
       TxPauseRq_sync1 <=  1'b0;
       TxPauseRq_sync2 <=  1'b0;
@@ -955,9 +955,9 @@ begin
 end
 
 
-always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
+always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     TPauseRq <=  1'b0;
   else
     TPauseRq <=  TxPauseRq_sync2 & (~TxPauseRq_sync3);
@@ -972,9 +972,9 @@ reg RxAbortRst_sync1;
 reg RxAbortRst;
 
 // Synchronizing RxAbort to the WISHBONE clock
-always @ (posedge mrx_clk_pad_i or posedge wb_rst_i)
+always @ (posedge ifpins.mrx_clk_pad_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     RxAbort_latch <=  1'b0;
   else if(RxAbort | (ShortFrame & ~r_RecSmall) | LatchedMRxErr &
           ~InvalidSymbol | (ReceivedPauseFrm & (~r_PassAll)))
@@ -983,9 +983,9 @@ begin
     RxAbort_latch <=  1'b0;
 end
 
-always @ (posedge wb_clk_i or posedge wb_rst_i)
+always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     begin
       RxAbort_sync1 <=  1'b0;
       RxAbort_wb    <=  1'b0;
@@ -998,9 +998,9 @@ begin
     end
 end
 
-always @ (posedge mrx_clk_pad_i or posedge wb_rst_i)
+always @ (posedge ifpins.mrx_clk_pad_i or posedge ifpins.wb_rst_i)
 begin
-  if(wb_rst_i)
+  if(ifpins.wb_rst_i)
     begin
       RxAbortRst_sync1 <=  1'b0;
       RxAbortRst       <=  1'b0;
@@ -1023,33 +1023,33 @@ eth_wishbone #(.TX_FIFO_DATA_WIDTH(TX_FIFO_DATA_WIDTH),
 	       .RX_FIFO_CNT_WIDTH (RX_FIFO_CNT_WIDTH))
 wishbone
 (
-  .WB_CLK_I(wb_clk_i),
-  .WB_DAT_I(wb_dat_i),
+  .WB_CLK_I(ifpins.wb_clk_i),
+  .WB_DAT_I(ifpins.wb_dat_i),
   .WB_DAT_O(BD_WB_DAT_O),
 
   // WISHBONE slave
-  .WB_ADR_I(wb_adr_i[9:2]),
-  .WB_WE_I(wb_we_i),
+  .WB_ADR_I(ifpins.wb_adr_i[9:2]),
+  .WB_WE_I(ifpins.wb_we_i),
   .BDCs(BDCs),
   .WB_ACK_O(BDAck),
-  .Reset(wb_rst_i),
+  .Reset(ifpins.wb_rst_i),
 
   // WISHBONE master
   .m_wb_adr_o(m_wb_adr_tmp),
-  .m_wb_sel_o(m_wb_sel_o),
-  .m_wb_we_o(m_wb_we_o),
-  .m_wb_dat_i(m_wb_dat_i),
-  .m_wb_dat_o(m_wb_dat_o),
-  .m_wb_cyc_o(m_wb_cyc_o),
-  .m_wb_stb_o(m_wb_stb_o),
-  .m_wb_ack_i(m_wb_ack_i),
-  .m_wb_err_i(m_wb_err_i),
+  .m_wb_sel_o(ifpins.m_wb_sel_o),
+  .m_wb_we_o(ifpins.m_wb_we_o),
+  .m_wb_dat_i(ifpins.m_wb_dat_i),
+  .m_wb_dat_o(ifpins.m_wb_dat_o),
+  .m_wb_cyc_o(ifpins.m_wb_cyc_o),
+  .m_wb_stb_o(ifpins.m_wb_stb_o),
+  .m_wb_ack_i(ifpins.m_wb_ack_i),
+  .m_wb_err_i(ifpins.m_wb_err_i),
   
-  .m_wb_cti_o(m_wb_cti_o),
-  .m_wb_bte_o(m_wb_bte_o), 
+  .m_wb_cti_o(ifpins.m_wb_cti_o),
+  .m_wb_bte_o(ifpins.m_wb_bte_o), 
 
     //TX
-  .MTxClk(mtx_clk_pad_i),
+  .MTxClk(ifpins.mtx_clk_pad_i),
   .TxStartFrm(TxStartFrm),
   .TxEndFrm(TxEndFrm),
   .TxUsedData(TxUsedData),
@@ -1069,7 +1069,7 @@ wishbone
   .r_PassAll(r_PassAll), 
 
   //RX
-  .MRxClk(mrx_clk_pad_i),
+  .MRxClk(ifpins.mrx_clk_pad_i),
   .RxData(RxData),
   .RxValid(RxValid),
   .RxStartFrm(RxStartFrm),
@@ -1103,9 +1103,9 @@ wishbone
   
 `ifdef ETH_BIST
   ,
-  .mbist_si_i       (mbist_si_i),
-  .mbist_so_o       (mbist_so_o),
-  .mbist_ctrl_i       (mbist_ctrl_i)
+  .mbist_si_i       (ifpins.mbist_si_i),
+  .mbist_so_o       (ifpins.mbist_so_o),
+  .mbist_ctrl_i       (ifpins.mbist_ctrl_i)
 `endif
 `ifdef WISHBONE_DEBUG
   ,
@@ -1114,13 +1114,13 @@ wishbone
 
 );
 
-assign m_wb_adr_o = {m_wb_adr_tmp, 2'h0};
+assign ifpins.m_wb_adr_o = {m_wb_adr_tmp, 2'h0};
 
 // Connecting MacStatus module
 eth_macstatus macstatus1 
 (
-  .MRxClk(mrx_clk_pad_i),
-  .Reset(wb_rst_i),
+  .MRxClk(ifpins.mrx_clk_pad_i),
+  .Reset(ifpins.wb_rst_i),
   .ReceiveEnd(ReceiveEnd),
   .ReceivedPacketGood(ReceivedPacketGood),
      .ReceivedLengthOK(ReceivedLengthOK),
@@ -1139,7 +1139,7 @@ eth_macstatus macstatus1
   .InvalidSymbol(InvalidSymbol),
   .MRxD(MRxD_Lb),
   .LatchedCrcError(LatchedCrcError),
-  .Collision(mcoll_pad_i),
+  .Collision(ifpins.mcoll_pad_i),
   .CollValid(r_CollValid),
   .RxLateCollision(RxLateCollision),
   .r_RecSmall(r_RecSmall),
@@ -1154,7 +1154,7 @@ eth_macstatus macstatus1
   .StartTxDone(StartTxDone),
   .StartTxAbort(StartTxAbort),
   .RetryCntLatched(RetryCntLatched),
-  .MTxClk(mtx_clk_pad_i),
+  .MTxClk(ifpins.mtx_clk_pad_i),
   .MaxCollisionOccured(MaxCollisionOccured),
   .RetryLimit(RetryLimit),
   .LateCollision(LateCollision),

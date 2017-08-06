@@ -26,10 +26,10 @@ logic 		wb_err_o;
  logic 		m_wb_we_o; 
  logic 	[31:0]	m_wb_dat_o;
  logic 	[31:0]	m_wb_dat_i;
- logic 		m_wb_cyc_o, 
+ logic 		m_wb_cyc_o; 
  logic 		m_wb_stb_o;
  logic 		m_wb_ack_i;
- logic 		m_wb_err_i, 
+ logic 		m_wb_err_i; 
  logic	[2:0]	m_wb_cti_o;
  logic 	[1:0]	m_wb_bte_o;
 
@@ -80,7 +80,7 @@ modport eth_mp(
 		input  wb_we_i,      // WISHBONE write enable input
 		input  wb_cyc_i,     // WISHBONE cycle input
 		input  wb_stb_i,     // WISHBONE strobe input
-		output wb_ack_o     // WISHBONE acknowledge output
+		output wb_ack_o,     // WISHBONE acknowledge output
 		output m_wb_adr_o,
 		output m_wb_sel_o,
 		output m_wb_we_o,
@@ -92,25 +92,29 @@ modport eth_mp(
 		input  m_wb_err_i,
 		output m_wb_cti_o,   // Cycle Type Identifier
 		output m_wb_bte_o,   // Burst Type Extension
-		input  mtx_clk_pad_i; // Transmit clock (from PHY)
-		output mtxd_pad_o;    // Transmit nibble (to PHY)
-		output mtxen_pad_o;   // Transmit enable (to PHY)
-		output mtxerr_pad_o;  // Transmit error (to PHY)
-		input mrx_clk_pad_i; // Receive clock (from PHY)
-		input mrxd_pad_i;    // Receive nibble (from PHY)
-		input mrxdv_pad_i;   // Receive data valid (from PHY)
-		input mrxerr_pad_i;  // Receive data error (from PHY)
-		input  mcoll_pad_i;   // Collision (from PHY)
-		input  mcrs_pad_i;    // Carrier sense (from PHY)
-		input  md_pad_i;      // MII data input (from I/O cell)
-		output mdc_pad_o;     // MII Management data clock (to PHY)
-		output md_pad_o;      // MII data output (to I/O cell)
-		output md_padoe_o;    // MII data output enable (to I/O cell)
-		output int_o;         // Interrupt output
+		input  mtx_clk_pad_i, // Transmit clock (from PHY)
+		output mtxd_pad_o,    // Transmit nibble (to PHY)
+		output mtxen_pad_o,   // Transmit enable (to PHY)
+		output mtxerr_pad_o,  // Transmit error (to PHY)
+		input mrx_clk_pad_i, // Receive clock (from PHY)
+		input mrxd_pad_i,    // Receive nibble (from PHY)
+		input mrxdv_pad_i,   // Receive data valid (from PHY)
+		input mrxerr_pad_i,  // Receive data error (from PHY)
+		input  mcoll_pad_i,   // Collision (from PHY)
+		input  mcrs_pad_i,    // Carrier sense (from PHY)
+		input  md_pad_i,      // MII data input (from I/O cell)
+		output mdc_pad_o,     // MII Management data clock (to PHY)
+		output md_pad_o,      // MII data output (to I/O cell)
+		output md_padoe_o,    // MII data output enable (to I/O cell)
 		`ifdef ETH_BIST
-		input   mbist_si_i;       // bist scan serial in
-		output  mbist_so_o;       // bist scan serial out
-		input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i;       // bist chain shift control
+		output int_o,         // Interrupt output
+		`else
+		output int_o
+		`endif
+		`ifdef ETH_BIST
+		input   mbist_si_i,       // bist scan serial in
+		output  mbist_so_o,       // bist scan serial out
+		input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i       // bist chain shift control
 		`endif
 		);
 
@@ -173,7 +177,7 @@ modport eth_mp(
 		input   m_wb_we_o,      // WISHBONE write enable input
 		input   m_wb_cyc_o,     // WISHBONE cycle input
 		input   m_wb_stb_o,     // WISHBONE strobe input		
-		input	m_wb_dat_o		// WISHBONE Data input
+		input	m_wb_dat_o,		// WISHBONE Data input
 		input   m_wb_cti_o,     // Cycle Type Identifier
 		input   m_wb_bte_o     // Burst Type Extension
 	);
