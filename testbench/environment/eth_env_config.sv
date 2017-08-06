@@ -19,8 +19,9 @@ eth_reg_block eth_rm;
 
 virtual wb_master_driver_if DELAY_IF;
 
-extern task wait_for_interrupt;
-extern function bit is_interrupt_cleared;
+//FIXIT define the functions
+//extern task wait_for_interrupt;
+//extern function bit is_interrupt_cleared;
 extern task pound_delay(int n=0);
 
 function new (string name = m_name);

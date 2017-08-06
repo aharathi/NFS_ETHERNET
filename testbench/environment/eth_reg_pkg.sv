@@ -10,7 +10,7 @@ import uvm_register_pkg::*;
 
 `include "eth_regs.sv"
 
-endpackagew
+endpackage
 
 `endif
 

@@ -1,4 +1,4 @@
-`infdef WB_DRIVER
+`ifndef WB_DRIVER
 `define WB_DRIVER
 
 //`include "wishbone_package.sv"
@@ -29,7 +29,7 @@ BFM.wait_for_reset();
 forever begin
 seq_item_port.get_next_item(wb_seq);
 wb_seq_item_converter::from_class(wb_seq,wb_req_s);
-if (wb_seq.r_w_t == READ) BFM.read(wb_req_s,wb_resp_s); else BFM.write(wb_req_s,wb_resp_s);
+if (wb_seq.wb_we_i == READ) BFM.read(wb_req_s,wb_resp_s); else BFM.write(wb_req_s,wb_resp_s);
 seq_item_port.item_done();
 end 
 endtask 

@@ -18,13 +18,28 @@ class wb_seq_item extends uvm_sequence_item;
 function new(string name = "wb_seq_item");
 super.new(name);
 endfunction 
-extern virtual function void do_copy(uvm_object rhs);
+
+//FIXIT have to define the functions
+//extern virtual function void do_copy(uvm_object rhs);
 extern virtual function string convert2string();
 
 endclass
 //definition of methods
 
-
+function string wb_seq_item::convert2string();
+ string cls_snpsht;
+ cls_snpsht = $sformatf("\n\n****************************************************************************\n\
+                 WISHBONE SEQUENCE ITEM\n\
+         Addr(h):%5h  WE:%s  CYC:%d  STB:%d \n\
+         SEL:%d  DAT_I:%d  DAT_O:%d \n\
+         ERR:%d ACK:%d \n\
+********************************************************************************\n"
+         ,wb_adr_i,wb_we_i, wb_cyc_i, wb_stb_i
+		 ,wb_sel_i,wb_dat_i,wb_dat_o
+		 ,wb_err_o,wb_ack_o);
+		   
+ return cls_snpsht;
+endfunction 
 
 
 
@@ -36,7 +51,7 @@ class eth_wb_req_trans extends wb_seq_item;
 
 //have to add more constrints s necessary 
 constraint addr_wb_align {wb_adr_i[1:0] == 2'd0; }
-constraint addr_wb {wb_adr_i inside [32'h0 : 32'h7fc]};
+constraint addr_wb {wb_adr_i inside {[32'h0 : 32'h7fc]};}
 
 
 
@@ -126,7 +141,7 @@ static function void to_class (input wb_sl_seq_s wb_s, output wb_seq_item wb_h);
  wb_h = new();
  wb_h.wb_adr_i = wb_s.wb_adr_i;
  wb_h.wb_adr_i = wb_s.wb_adr_i;
- wb_h.wb_we_i  = wb_s.wb_we_i;
+ wb_h.wb_we_i  = r_w_t'(wb_s.wb_we_i);
  wb_h.wb_cyc_i = wb_s.wb_cyc_i;
  wb_h.wb_stb_i = wb_s.wb_stb_i;
  wb_h.wb_sel_i = wb_s.wb_sel_i;
@@ -139,3 +154,5 @@ static function void to_class (input wb_sl_seq_s wb_s, output wb_seq_item wb_h);
 endfunction 
 
 endclass 
+
+`endif

@@ -2,7 +2,7 @@
 `define ETH_ENV
 
 class eth_env extends uvm_env;
-`uvm_components_utils(eth_env)
+`uvm_component_utils(eth_env)
 
 
 string m_name = "eth_env";
@@ -38,7 +38,7 @@ endfunction
 function void eth_env::connect_phase(uvm_phase phase);
 
 if (m_env_cfg.m_wb_agent_cfg.active == UVM_ACTIVE) begin 
-reg2wb = reg2wb_adapter::type_id_create("reg2wb");
+reg2wb = reg2wb_adapter::type_id::create("reg2wb");
 
 if (m_env_cfg.eth_rm.get_parent() == null) begin
 m_env_cfg.eth_rm.ETH_map.set_sequencer(m_wb_agent.m_sequencer,reg2wb);
