@@ -13,7 +13,8 @@ super.new(name);
 endfunction
 
 task body;
-assert(uvm_config_db#(eth_reg_block)::get(this,"","eth_reg_block",eth_rm)) `uvm_error(m_name,"body method REG MODEL not found")
+//assert(uvm_config_db#(eth_reg_block)::get(this,"","eth_reg_block",eth_rm)) `uvm_error(m_name,"body method REG MODEL not found")
+assert(uvm_config_db#(eth_reg_block)::get(null,get_full_name(),"eth_reg_block",eth_rm)) `uvm_info(m_name,"Got the Reg Block",UVM_INFO) else `uvm_error(m_name,"body method REG MODEL not found")
 endtask
 endclass
 `endif

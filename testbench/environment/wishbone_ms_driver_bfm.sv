@@ -13,7 +13,7 @@ begin
  bus.wb_stb_i = 1'b0;
  bus.wb_sel_i = {`WB_SEL_WIDTH{1'bx}};
  
- bus.wb_dat_o = {`WB_DATA_WIDTH{1'bx}};
+ //bus.wb_dat_o = {`WB_DATA_WIDTH{1'bx}};
  bus.wb_dat_i = {`WB_DATA_WIDTH{1'bx}};
 
 end
@@ -78,9 +78,11 @@ task write (input wb_sl_seq_s ms_req,output wb_sl_seq_s ms_rsp); //pragma tbx xt
  
  // Drive the inputs of the slave 
  
- bus.wb_dat_o = ms_req.wb_dat_i;
+ //bus.wb_dat_o = ms_req.wb_dat_i;
+ bus.wb_dat_i = ms_req.wb_dat_i;
  bus.wb_adr_i = ms_req.wb_adr_i[11:2];
- bus.wb_sel_i = ms_req.wb_sel_i;
+ //bus.wb_sel_i = ms_req.wb_sel_i;
+ bus.wb_sel_i = 1'b1;
  bus.wb_we_i  = WRITE;
  bus.wb_cyc_i = 1'b1;
  bus.wb_stb_i = 1'b1;

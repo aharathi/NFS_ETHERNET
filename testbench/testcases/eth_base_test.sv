@@ -45,8 +45,8 @@ wb_agent_cfg = wb_agent_config::type_id::create("wb_agent_cfg");
 
 configure_wb_agent(wb_agent_cfg);
 
-assert(uvm_config_db #(virtual wb_master_driver_if)::get(this,"","hdl_top.WB_DRIVER",wb_agent_cfg.WB_BFM)) `uvm_error (m_name,"build_phase did not find the driver interface")
-assert(uvm_config_db #(virtual wb_master_driver_if)::get(this,"","hdl_top.WB_DRIVER",env_cfg.DELAY_IF)) `uvm_error (m_name,"build_phase did not find the driver interface")
+assert(uvm_config_db #(virtual wb_master_driver_if)::get(null,"uvm_test_top","hdl_top.WB_DRIVER",wb_agent_cfg.WB_BFM)) `uvm_info (m_name,"Got the Driver Interface",UVM_INFO)  else `uvm_error (m_name,"build_phase did not find the driver interface")
+assert(uvm_config_db #(virtual wb_master_driver_if)::get(null,"uvm_test_top","hdl_top.WB_DRIVER",env_cfg.DELAY_IF)) `uvm_info (m_name,"Got the Driver Interface",UVM_INFO)  else `uvm_error (m_name,"build_phase did not find the driver interface")
 
 env_cfg.m_wb_agent_cfg = wb_agent_cfg;
 
