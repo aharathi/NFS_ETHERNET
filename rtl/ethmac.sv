@@ -242,7 +242,8 @@
 `include "timescale.v"
 
 
-module ethmac (ethmac_if_pins ifpins);
+//module ethmac (ethmac_if_pins ifpins);
+module ethmac (interface ifpins);
 /*
 (	
 // WISHBONE common

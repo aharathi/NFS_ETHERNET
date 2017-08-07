@@ -24,4 +24,4 @@
 ../../rtl/eth_txstatem.v
 ../../rtl/eth_wishbone.v
 ../../rtl/eth_phy.v
-../../rtl/ethmac.v
+../../rtl/ethmac.sv
