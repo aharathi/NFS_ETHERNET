@@ -26,12 +26,28 @@ wb_sl_seq_s wb_req_s,wb_resp_s;
 
 BFM.wait_for_reset();
 
-forever begin
+`uvm_info({my_name,"::run_phase"},"started getting sequence items",UVM_DEBUG)
+
+//phase.raise_objection(this,"getting the sequence item");
+
+forever begin //{
 seq_item_port.get_next_item(wb_seq);
+phase.raise_objection(this,"getting the sequence item");
 wb_seq_item_converter::from_class(wb_seq,wb_req_s);
-if (wb_seq.wb_we_i == READ) BFM.read(wb_req_s,wb_resp_s); else BFM.write(wb_req_s,wb_resp_s);
-seq_item_port.item_done();
+if (wb_seq.wb_we_i == READ) begin 
+`uvm_info({my_name,"::run_phase"},"calling read task",UVM_DEBUG)
+BFM.read(wb_req_s,wb_resp_s);
 end 
+else begin 
+`uvm_info({my_name,"::run_phase"},"calling write task",UVM_DEBUG)
+BFM.write(wb_req_s,wb_resp_s);
+end 
+seq_item_port.item_done();
+phase.drop_objection(this,"done trasferring all the sequnce item");
+end //}
+
+//phase.drop_objection(this,"done trasferring all the sequnce item");
+`uvm_info({my_name,"::run_phase"},"done getting sequence items",UVM_DEBUG)
 endtask 
 
 

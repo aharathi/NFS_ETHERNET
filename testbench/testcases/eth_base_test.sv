@@ -65,6 +65,7 @@ cfg.has_scoreboard = 0;
 endfunction  
 
 task eth_base_test::wait_n_clks(int n = 0);
+`uvm_info({m_name,"::wait"},$sformatf("waiting for %0d clock cycles",n),UVM_DEBUG)
 env_cfg.pound_delay(n);
 endtask 
 

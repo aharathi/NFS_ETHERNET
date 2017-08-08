@@ -34,8 +34,9 @@ endfunction
 task body;
 super.body;
 
-//enable Full Duplex 
+`uvm_info({m_name,"::body"},"starting the register write sequence",UVM_DEBUG)
 
+//enable Full Duplex 
 eth_rm.moder_reg.FULLD.set(1);
 eth_rm.moder_reg.update(status,.path(UVM_FRONTDOOR),.parent(this));
 

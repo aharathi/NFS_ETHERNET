@@ -24,7 +24,8 @@ eth_reg_write_seq reg_wr_seq = eth_reg_write_seq::type_id::create("reg_wr_seq");
 
 phase.raise_objection(this,"Starting reg_wr_seq");
 reg_wr_seq.start(m_env.m_wb_agent.m_sequencer);
-wait_n_clks(100);
+`uvm_info({m_name,"::build_phase"},"wating for 2000 clock cycles before dropping objection",UVM_DEBUG)
+wait_n_clks(2000);
 phase.drop_objection(this,"Ending reg_wr_seq");
 endtask
 
