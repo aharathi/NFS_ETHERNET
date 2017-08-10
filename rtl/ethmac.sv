@@ -243,7 +243,7 @@
 
 
 //module ethmac (ethmac_if_pins ifpins);
-module ethmac (interface ifpins);
+module ethmac (ethmac_if_pin ifpins);
 /*
 (	
 // WISHBONE common
@@ -394,8 +394,10 @@ reg             TPauseRq;
 // Connecting Miim module
 eth_miim miim1
 (
-  .Clk(ifpins.wb_clk_i),
-  .Reset(ifpins.wb_rst_i),
+  //.Clk(ifpins.SysClk),
+  //.Reset(ifpins.rst),
+  .Clk(ifpins.SysClk),
+  .Reset(ifpins.rst),
   .Divider(r_ClkDiv),
   .NoPre(r_MiiNoPre),
   .CtrlData(r_CtrlData),
@@ -548,9 +550,9 @@ assign temp_wb_err_o = ifpins.wb_stb_i & ifpins.wb_cyc_i & (~ByteSelected | CsMi
 `endif
 
 `ifdef ETH_REGISTERED_OUTPUTS
-  always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
+  always @ (posedge ifpins.SysClk or posedge ifpins.rst)
   begin
-    if(ifpins.wb_rst_i)
+    if(ifpins.rst)
       begin
         temp_wb_ack_o_reg <= 1'b0;
         temp_wb_dat_o_reg <= 32'h0;
@@ -573,8 +575,8 @@ eth_registers ethreg1
   .Address(ifpins.wb_adr_i[9:2]),
   .Rw(ifpins.wb_we_i),
   .Cs(RegCs),
-  .Clk(ifpins.wb_clk_i),
-  .Reset(ifpins.wb_rst_i),
+  .Clk(ifpins.SysClk),
+  .Reset(ifpins.rst),
   .DataOut(RegDataOut),
   .r_RecSmall(r_RecSmall),
   .r_Pad(r_Pad),
@@ -632,8 +634,8 @@ eth_registers ethreg1
   .RstTxPauseRq(RstTxPauseRq),
   .TxCtrlEndFrm(TxCtrlEndFrm),
   .StartTxDone(StartTxDone),
-  .TxClk(ifpins.mtx_clk_pad_i),
-  .RxClk(ifpins.mrx_clk_pad_i),
+  .TxClk(ifpins.SysClk),
+  .RxClk(ifpins.SysClk),
   .dbg_dat(wb_dbg_dat0),
   .SetPauseTimer(SetPauseTimer)
   
@@ -669,7 +671,7 @@ wire  [1:0] StateData;
 // Connecting MACControl
 eth_maccontrol maccontrol1
 (
-  .MTxClk(ifpins.mtx_clk_pad_i),
+  .MTxClk(ifpins.SysClk),
   .TPauseRq(TPauseRq),
   .TxPauseTV(r_TxPauseTV),
   .TxDataIn(TxData),
@@ -678,7 +680,7 @@ eth_maccontrol maccontrol1
   .TxUsedDataIn(TxUsedDataIn),
   .TxDoneIn(TxDoneIn),
   .TxAbortIn(TxAbortIn),
-  .MRxClk(ifpins.mrx_clk_pad_i),
+  .MRxClk(ifpins.SysClk),
   .RxData(RxData),
   .RxValid(RxValid),
   .RxStartFrm(RxStartFrm),
@@ -693,8 +695,8 @@ eth_maccontrol maccontrol1
   .PadOut(PadOut),
   .CrcEnIn(r_CrcEn | PerPacketCrcEn),
   .CrcEnOut(CrcEnOut),
-  .TxReset(ifpins.wb_rst_i),
-  .RxReset(ifpins.wb_rst_i),
+  .TxReset(ifpins.rst),
+  .RxReset(ifpins.rst),
   .ReceivedLengthOK(ReceivedLengthOK),
   .TxDataOut(TxDataOut),
   .TxStartFrmOut(TxStartFrmOut),
@@ -741,8 +743,8 @@ assign MRxD_Lb[3:0] = r_LoopBck? ifpins.mtxd_pad_o[3:0] : ifpins.mrxd_pad_i[3:0]
 // Connecting TxEthMAC
 eth_txethmac txethmac1
 (
-  .MTxClk(ifpins.mtx_clk_pad_i),
-  .Reset(ifpins.wb_rst_i),
+  .MTxClk(ifpins.SysClk),
+  .Reset(ifpins.rst),
   .CarrierSense(TxCarrierSense),
   .Collision(Collision),
   .TxData(TxDataOut),
@@ -801,7 +803,7 @@ wire          AddressMiss;
 // Connecting RxEthMAC
 eth_rxethmac rxethmac1
 (
-  .MRxClk(ifpins.mrx_clk_pad_i),
+  .MRxClk(ifpins.SysClk),
   .MRxDV(MRxDV_Lb),
   .MRxD(MRxD_Lb),
   .Transmitting(Transmitting),
@@ -809,7 +811,7 @@ eth_rxethmac rxethmac1
   .DlyCrcEn(r_DlyCrcEn),
   .MaxFL(r_MaxFL),
   .r_IFG(r_IFG),
-  .Reset(ifpins.wb_rst_i),
+  .Reset(ifpins.rst),
   .RxData(RxData),
   .RxValid(RxValid),
   .RxStartFrm(RxStartFrm),
@@ -836,9 +838,9 @@ eth_rxethmac rxethmac1
 
 
 // MII Carrier Sense Synchronization
-always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     begin
       CarrierSense_Tx1 <=  1'b0;
       CarrierSense_Tx2 <=  1'b0;
@@ -854,9 +856,9 @@ assign TxCarrierSense = ~r_FullD & CarrierSense_Tx2;
 
 
 // MII Collision Synchronization
-always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     begin
       Collision_Tx1 <=  1'b0;
       Collision_Tx2 <=  1'b0;
@@ -879,7 +881,7 @@ assign Collision = ~r_FullD & Collision_Tx2;
 
 
 // Delayed WillTransmit
-always @ (posedge ifpins.mrx_clk_pad_i)
+always @ (posedge ifpins.SysClk)
 begin
   WillTransmit_q <=  WillTransmit;
   WillTransmit_q2 <=  WillTransmit_q;
@@ -888,12 +890,12 @@ end
 
 assign Transmitting = ~r_FullD & WillTransmit_q2;
 
-
+//input wb_clk_i,input mtx_clk_pad_i,input mrx_clk_pad_i,input wb_rst_if
 
 // Synchronized Receive Enable
-always @ (posedge ifpins.mrx_clk_pad_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     RxEnSync <=  1'b0;
   else
   if(~ifpins.mrxdv_pad_i)
@@ -903,33 +905,33 @@ end
 
 
 // Synchronizing WillSendControlFrame to WB_CLK;
-always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     WillSendControlFrame_sync1 <= 1'b0;
   else
     WillSendControlFrame_sync1 <= WillSendControlFrame;
 end
 
-always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     WillSendControlFrame_sync2 <= 1'b0;
   else
     WillSendControlFrame_sync2 <= WillSendControlFrame_sync1;
 end
 
-always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     WillSendControlFrame_sync3 <= 1'b0;
   else
     WillSendControlFrame_sync3 <= WillSendControlFrame_sync2;
 end
 
-always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     RstTxPauseRq <= 1'b0;
   else
     RstTxPauseRq <= WillSendControlFrame_sync2 & ~WillSendControlFrame_sync3;
@@ -939,9 +941,9 @@ end
 
 
 // TX Pause request Synchronization
-always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     begin
       TxPauseRq_sync1 <=  1'b0;
       TxPauseRq_sync2 <=  1'b0;
@@ -956,9 +958,9 @@ begin
 end
 
 
-always @ (posedge ifpins.mtx_clk_pad_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     TPauseRq <=  1'b0;
   else
     TPauseRq <=  TxPauseRq_sync2 & (~TxPauseRq_sync3);
@@ -973,9 +975,9 @@ reg RxAbortRst_sync1;
 reg RxAbortRst;
 
 // Synchronizing RxAbort to the WISHBONE clock
-always @ (posedge ifpins.mrx_clk_pad_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     RxAbort_latch <=  1'b0;
   else if(RxAbort | (ShortFrame & ~r_RecSmall) | LatchedMRxErr &
           ~InvalidSymbol | (ReceivedPauseFrm & (~r_PassAll)))
@@ -984,9 +986,9 @@ begin
     RxAbort_latch <=  1'b0;
 end
 
-always @ (posedge ifpins.wb_clk_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     begin
       RxAbort_sync1 <=  1'b0;
       RxAbort_wb    <=  1'b0;
@@ -999,9 +1001,9 @@ begin
     end
 end
 
-always @ (posedge ifpins.mrx_clk_pad_i or posedge ifpins.wb_rst_i)
+always @ (posedge ifpins.SysClk or posedge ifpins.rst)
 begin
-  if(ifpins.wb_rst_i)
+  if(ifpins.rst)
     begin
       RxAbortRst_sync1 <=  1'b0;
       RxAbortRst       <=  1'b0;
@@ -1024,7 +1026,7 @@ eth_wishbone #(.TX_FIFO_DATA_WIDTH(TX_FIFO_DATA_WIDTH),
 	       .RX_FIFO_CNT_WIDTH (RX_FIFO_CNT_WIDTH))
 wishbone
 (
-  .WB_CLK_I(ifpins.wb_clk_i),
+  .WB_CLK_I(ifpins.SysClk),
   .WB_DAT_I(ifpins.wb_dat_i),
   .WB_DAT_O(BD_WB_DAT_O),
 
@@ -1033,7 +1035,7 @@ wishbone
   .WB_WE_I(ifpins.wb_we_i),
   .BDCs(BDCs),
   .WB_ACK_O(BDAck),
-  .Reset(ifpins.wb_rst_i),
+  .Reset(ifpins.rst),
 
   // WISHBONE master
   .m_wb_adr_o(m_wb_adr_tmp),
@@ -1050,7 +1052,7 @@ wishbone
   .m_wb_bte_o(ifpins.m_wb_bte_o), 
 
     //TX
-  .MTxClk(ifpins.mtx_clk_pad_i),
+  .MTxClk(ifpins.SysClk),
   .TxStartFrm(TxStartFrm),
   .TxEndFrm(TxEndFrm),
   .TxUsedData(TxUsedData),
@@ -1070,7 +1072,7 @@ wishbone
   .r_PassAll(r_PassAll), 
 
   //RX
-  .MRxClk(ifpins.mrx_clk_pad_i),
+  .MRxClk(ifpins.SysClk),
   .RxData(RxData),
   .RxValid(RxValid),
   .RxStartFrm(RxStartFrm),
@@ -1120,8 +1122,8 @@ assign ifpins.m_wb_adr_o = {m_wb_adr_tmp, 2'h0};
 // Connecting MacStatus module
 eth_macstatus macstatus1 
 (
-  .MRxClk(ifpins.mrx_clk_pad_i),
-  .Reset(ifpins.wb_rst_i),
+  .MRxClk(ifpins.SysClk),
+  .Reset(ifpins.rst),
   .ReceiveEnd(ReceiveEnd),
   .ReceivedPacketGood(ReceivedPacketGood),
      .ReceivedLengthOK(ReceivedLengthOK),
@@ -1155,7 +1157,7 @@ eth_macstatus macstatus1
   .StartTxDone(StartTxDone),
   .StartTxAbort(StartTxAbort),
   .RetryCntLatched(RetryCntLatched),
-  .MTxClk(ifpins.mtx_clk_pad_i),
+  .MTxClk(ifpins.SysClk),
   .MaxCollisionOccured(MaxCollisionOccured),
   .RetryLimit(RetryLimit),
   .LateCollision(LateCollision),
