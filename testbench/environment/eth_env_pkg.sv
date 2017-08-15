@@ -10,6 +10,7 @@ import uvm_pkg::*;
 //import questa_uvm_pkg::*;
 import wb_struct_pkg::*;
 import eth_reg_pkg::*;
+//import xtlm_pkg::*;
 
 `include "wb_seq_item.sv"
 `include "wb_master_driver.sv"

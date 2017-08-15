@@ -1,9 +1,8 @@
 
 
-module hdl_top;
-`timescale 1ns/10ps
+module hdl_top; //pragma attribute hdl_top partition_module_xrtl
 
-//pragma attribute hdl_top partition_module_xrtl
+//`timescale 1ns/10ps
 
 logic clk,clk_tx,clk_rx;
 logic rst;
@@ -61,15 +60,17 @@ end
 
 
 //setting virtual interface 
-initial begin  //tbx vif_binding_block
-import uvm_pkg::*;
-
-
-//set diver BFM //%m = hdl_top 
-uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif);
-
-
-end 
+//initial begin  //tbx vif_binding_block
+////import uvm_pkg::*;
+//import uvm_pkg::uvm_config_db;
+//
+//
+////set diver BFM //%m = hdl_top 
+//uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif); //tbx vif_binding_block
+//
+//
+//
+//end 
 
 
 endmodule 

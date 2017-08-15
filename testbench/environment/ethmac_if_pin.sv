@@ -4,7 +4,7 @@
 
 
 interface ethmac_if_pins(input wb_clk_i,input mtx_clk_pad_i,input mrx_clk_pad_i,input wb_rst_i);
-
+// pragma attribute ethmac_if_pins partition_interface_xif
  // WISHBONE common
 //logic		wb_clk_i; // WISHBONE clock
 //logic		wb_rst_i; // WISHBONE reset
