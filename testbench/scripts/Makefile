@@ -36,13 +36,17 @@ else
 		#velcomp -f xrtl.f 
 		tbxcomp -top hdl_top -veloce
 		#velcomp -top hdl_top 
-		#velhvl -sim veloce
+		velhvl -sim veloce
 endif
 	
 run:
 	#vsim -c -do "run -all" hdl_top hvl_top +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_PHASE_TRACE +UVM_OBJECTION_TRACE +UVM_CONFIG_DB_TRACE
 	#vsim -c -do "run -all" hdl_top hvl_top +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_PHASE_TRACE +UVM_OBJECTION_TRACE
+ifeq ($(MODE),puresim)
 	vsim -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE
+else 
+	vsim -c -do "run -all" hdl_top hvl_top +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE
+endif
 
 clean:
 	rm -rf work
