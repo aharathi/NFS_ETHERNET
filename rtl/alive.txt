@@ -1,2 +1,1 @@
-MODULE tb_ethernetz.*************
-NET tb_ethernetz.***********
+MODULE hdl_top.******

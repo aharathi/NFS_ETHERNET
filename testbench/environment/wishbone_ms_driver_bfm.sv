@@ -4,19 +4,19 @@ import wb_struct_pkg::*;
 
 interface wb_master_driver_if (ethmac_if_pins bus); // pragma attribute wb_master_driver_if partition_interface_xif
 
-//initial 
-//begin
-//
-// bus.wb_adr_i = {`WB_ADDR_WIDTH{1'bx}};
-// bus.wb_we_i  = 1'b0;
-// bus.wb_cyc_i = 1'b0;
-// bus.wb_stb_i = 1'b0;
-// bus.wb_sel_i = {`WB_SEL_WIDTH{1'bx}};
-// 
-// //bus.wb_dat_o = {`WB_DATA_WIDTH{1'bx}};
-// bus.wb_dat_i = {`WB_DATA_WIDTH{1'bx}};
-//
-//end
+initial 
+begin
+
+ bus.wb_adr_i = {`WB_ADDR_WIDTH{1'b0}};
+ bus.wb_we_i  = 1'b0;
+ bus.wb_cyc_i = 1'b0;
+ bus.wb_stb_i = 1'b0;
+ bus.wb_sel_i = {`WB_SEL_WIDTH{1'b0}};
+ 
+ //bus.wb_dat_o = {`WB_DATA_WIDTH{1'bx}};
+ bus.wb_dat_i = {`WB_DATA_WIDTH{1'b0}};
+
+end
 
 
 //
