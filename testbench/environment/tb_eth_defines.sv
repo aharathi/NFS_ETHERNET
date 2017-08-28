@@ -210,3 +210,6 @@
 
 
 `define TIME $display("  Time: %0t", $time)
+
+//////////////NEW DEFINES/////////////////////////////////
+`define NUM_BUF_D 32'h80

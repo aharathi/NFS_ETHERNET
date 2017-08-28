@@ -96,8 +96,10 @@ class tx_bd_num extends uvm_reg;
 
 rand uvm_reg_field RESERVED;
 rand uvm_reg_field TxBD; //Tx BD Number
+int unsigned tx_buf_num;
+string my_name = "TX_BUF_NUM";
 
-function new(string name = "TX_BD_NUM");
+function new(string name = my_name);
 super.new(name,32,UVM_NO_COVERAGE);
 endfunction
 
@@ -105,8 +107,16 @@ virtual function void build();
 RESERVED	= uvm_reg_field::type_id::create("RESERVED");
 TxBD		= uvm_reg_field::type_id::create("TxBD");
 
-RESERVED.configure(this,24,8,"RW",0,1'b0,1,1,0);
-TxBD.configure(this,8,0,"RW",0,1'b0,1,1,0);
+RESERVED.configure(this,24,8,"RW",0,24'b0,1,1,0);
+// take the argument here and configure
+
+if ($value$plusargs("TX_BD_NUM=%h",tx_buf_num)) begin //{
+`uvm_info({my_name,"::build function"},$sformatf("Got the number of buffer desctipters %0d",tx_buf_num),UVM_DEBUG)
+TxBD.configure(this,8,0,"RW",0,tx_buf_num,1,1,0);
+end //}
+else begin //{
+TxBD.configure(this,8,0,"RW",0,8'h40,1,1,0);
+end //}
 endfunction
 endclass 
 
@@ -128,9 +138,9 @@ RESERVED	= uvm_reg_field::type_id::create("RESERVED");
 MIINOPRE	= uvm_reg_field::type_id::create("MIINOPRE");
 CLKDIV		= uvm_reg_field::type_id::create("CLKDIV");
 
-RESERVED.configure(this,23,9,"RW",0,1'b0,1,1,0);
+RESERVED.configure(this,23,9,"RW",0,23'b0,1,1,0);
 MIINOPRE.configure(this,1,8,"RW",0,1'b0,1,1,0);
-CLKDIV.configure(this,8,0,"RW",0,1'b0,1,1,0);
+CLKDIV.configure(this,8,0,"RW",0,8'b0,1,1,0);
 endfunction
 endclass
 
@@ -154,7 +164,7 @@ NVALID		= uvm_reg_field::type_id::create("NVALID");
 BUSY		= uvm_reg_field::type_id::create("BUSY");
 LINKFAIL	= uvm_reg_field::type_id::create("LINKFAIL");
 
-RESERVED.configure(this,29,3,"RW",0,1'b0,1,1,0);
+RESERVED.configure(this,29,3,"RW",0,29'b0,1,1,0);
 NVALID.configure(this,1,2,"RW",0,1'b0,1,1,0);
 BUSY.configure(this,1,1,"RW",0,1'b0,1,1,0);
 LINKFAIL.configure(this,1,0,"RW",0,1'b0,1,1,0);
@@ -169,15 +179,40 @@ rand moder moder_reg;
 rand tx_bd_num tx_bd_num_reg;
 rand miimoder miimoder_reg;
 rand miistatus miistatus_reg;
+rand tx_buf_des buff_d_tx[];
+rand pntr tx_pntr[];
+rand rx_buf_des buff_d_rx[];
+rand pntr rx_pntr[];
+string my_name = "eth_reg_block";
+int unsigned tx_buf_num;
 
 uvm_reg_map ETH_map;
 
-function new(string name="eth_reg_block");
+function new(string name= my_name);
 super.new(name,UVM_NO_COVERAGE); 
+if ($value$plusargs("TX_BD_NUM=%h",tx_buf_num)) begin //{
+`uvm_info({my_name,":: new"},$sformatf("Got the number of buffer desctipters %0d",tx_buf_num),UVM_DEBUG)
+if (tx_buf_num > `NUM_BUF_D) begin //{
+`uvm_error (my_name,"illegal number of buffer descriptors having default")
+tx_buf_num = 'h40;
+end //}
+end //}
+else begin //{
+tx_buf_num = 'h40;
+`uvm_info({my_name,":: new"},$sformatf("No commandline arg! number of buffer desctipters %0d",tx_buf_num),UVM_DEBUG)
+end //}
+
+buff_d_tx = new [tx_buf_num];
+tx_pntr = new [tx_buf_num];
+buff_d_rx = new [`NUM_BUF_D - tx_buf_num];
+rx_pntr = new [`NUM_BUF_D - tx_buf_num];
+`uvm_info({my_name,":: new"},$sformatf("buff_d_tx=%0d,tx_pntr=%0d,buff_d_rx=%0d,rx_pntr=%0d",buff_d_tx.size(),tx_pntr.size(),buff_d_rx.size(),rx_pntr.size()),UVM_DEBUG)
 endfunction 
 
 
 virtual function void build();
+
+string s;
 
 moder_reg = moder::type_id::create("MODER");
 moder_reg.configure(this,null,"");				//"" : to fill the HW Register HDL Path
@@ -194,6 +229,18 @@ miimoder_reg.build();
 miistatus_reg = miistatus::type_id::create("MIISTATUS"); 
 miistatus_reg.configure(this, null, "");
 miistatus_reg.build();
+
+
+`uvm_info({my_name,":: build"},$sformatf("size of tx buffer descripters %0d",buff_d_tx.size()),UVM_DEBUG)
+for (int i=0;i <= buff_d_tx.size() - 1;i++) begin //{
+$sformat(s,"buff_d_tx[%0d]",i);
+buff_d_tx[i] = tx_buf_des::type_id::create(s);
+buff_d_tx[i].configure(this,null,"");
+buff_d_tx[i].build();
+`uvm_info({my_name,":: build"},$sformatf("created and built %s",s),UVM_DEBUG)
+end //}
+	
+
 
 ETH_map = create_map("ETH_map",'h0,4,UVM_LITTLE_ENDIAN);
 
