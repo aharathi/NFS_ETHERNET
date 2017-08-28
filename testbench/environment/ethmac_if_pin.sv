@@ -18,7 +18,7 @@ logic 		wb_we_i;
 logic 		wb_cyc_i;
 logic 		wb_stb_i;
 logic 		wb_ack_o;
-logic 		wb_err_o; 
+logic 		wb_err_o;
 
   // WISHBONE master
  logic	[31:0]	m_wb_adr_o;
@@ -30,6 +30,7 @@ logic 		wb_err_o;
  logic 		m_wb_stb_o;
  logic 		m_wb_ack_i;
  logic 		m_wb_err_i; 
+ logic 		m_wb_rty_i; 
  logic	[2:0]	m_wb_cti_o;
  logic 	[1:0]	m_wb_bte_o;
 
@@ -168,6 +169,7 @@ modport eth_mp(
 		output	m_wb_dat_i,
 		output	m_wb_err_i,		
 		output  m_wb_ack_i,      // WISHBONE acknowledge output
+		output  m_wb_rty_i,
 				
 		input	wb_clk_i,
 		input	wb_rst_i,
