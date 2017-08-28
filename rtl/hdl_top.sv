@@ -1,8 +1,9 @@
 
 
-module hdl_top; //pragma attribute hdl_top partition_module_xrtl
+module hdl_top;
+`timescale 1ns/10ps
 
-//`timescale 1ns/10ps
+//pragma attribute hdl_top partition_module_xrtl
 
 logic clk,clk_tx,clk_rx;
 logic rst;
@@ -10,6 +11,8 @@ logic rst;
 ethmac_if_pins ethmac_pif (clk,clk_tx,clk_rx,rst);
 
 ethmac DUT_EMAC(ethmac_pif.eth_mp);
+
+Memory_TxRxData Mem_Slave(ethmac_pif.wb_slave_mem);
 
 //wb_driver_xif wb_drxif(ethmac_pif.wb_host_dr_mp); 
 wb_master_driver_if wb_ms_drif(ethmac_pif.wb_slave_mp);
@@ -60,17 +63,15 @@ end
 
 
 //setting virtual interface 
-//initial begin  //tbx vif_binding_block
-////import uvm_pkg::*;
-//import uvm_pkg::uvm_config_db;
-//
-//
-////set diver BFM //%m = hdl_top 
-//uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif); //tbx vif_binding_block
-//
-//
-//
-//end 
+initial begin  //tbx vif_binding_block
+import uvm_pkg::*;
+
+
+//set diver BFM //%m = hdl_top 
+uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif);
+
+
+end 
 
 
 endmodule 
