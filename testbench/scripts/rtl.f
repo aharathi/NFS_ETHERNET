@@ -27,4 +27,4 @@
 ../../rtl/*.v
 ../../rtl/ethmac.sv
 ../environment/wishbone_defines.sv
-#../../rtl/Memory_TxRxData.sv
+../../rtl/Memory_TxRxData.sv
