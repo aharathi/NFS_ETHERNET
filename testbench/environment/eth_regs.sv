@@ -111,7 +111,7 @@ RESERVED.configure(this,24,8,"RW",0,24'b0,1,1,0);
 // take the argument here and configure
 
 if ($value$plusargs("TX_BD_NUM=%h",tx_buf_num)) begin //{
-`uvm_info({my_name,"::build function"},$sformatf("Got the number of buffer desctipters %0d",tx_buf_num),UVM_DEBUG)
+//`uvm_info({my_name,"::build function"},$sformatf("Got the number of buffer desctipters %0d",tx_buf_num),UVM_DEBUG)
 TxBD.configure(this,8,0,"RW",0,tx_buf_num,1,1,0);
 end //}
 else begin //{
@@ -179,10 +179,10 @@ rand moder moder_reg;
 rand tx_bd_num tx_bd_num_reg;
 rand miimoder miimoder_reg;
 rand miistatus miistatus_reg;
-rand tx_buf_des buff_d_tx[];
-rand pntr tx_pntr[];
-rand rx_buf_des buff_d_rx[];
-rand pntr rx_pntr[];
+rand tx_buf_des buff_d_tx_reg[];
+rand pntr tx_pntr_reg[];
+rand rx_buf_des buff_d_rx_reg[];
+rand pntr rx_pntr_reg[];
 string my_name = "eth_reg_block";
 int unsigned tx_buf_num;
 
@@ -202,17 +202,18 @@ tx_buf_num = 'h40;
 `uvm_info({my_name,":: new"},$sformatf("No commandline arg! number of buffer desctipters %0d",tx_buf_num),UVM_DEBUG)
 end //}
 
-buff_d_tx = new [tx_buf_num];
-tx_pntr = new [tx_buf_num];
-buff_d_rx = new [`NUM_BUF_D - tx_buf_num];
-rx_pntr = new [`NUM_BUF_D - tx_buf_num];
-`uvm_info({my_name,":: new"},$sformatf("buff_d_tx=%0d,tx_pntr=%0d,buff_d_rx=%0d,rx_pntr=%0d",buff_d_tx.size(),tx_pntr.size(),buff_d_rx.size(),rx_pntr.size()),UVM_DEBUG)
+buff_d_tx_reg = new [tx_buf_num];
+tx_pntr_reg = new [tx_buf_num];
+buff_d_rx_reg = new [`NUM_BUF_D - tx_buf_num];
+rx_pntr_reg = new [`NUM_BUF_D - tx_buf_num];
+//`uvm_info({my_name,":: new"},$sformatf("buff_d_tx=%0d,tx_pntr=%0d,buff_d_rx=%0d,rx_pntr=%0d",buff_d_tx.size(),tx_pntr.size(),buff_d_rx.size(),rx_pntr.size()),UVM_DEBUG)
 endfunction 
 
 
 virtual function void build();
 
 string s;
+int unsigned BD_ADDR = `TX_BD_BASE;
 
 moder_reg = moder::type_id::create("MODER");
 moder_reg.configure(this,null,"");				//"" : to fill the HW Register HDL Path
@@ -231,14 +232,39 @@ miistatus_reg.configure(this, null, "");
 miistatus_reg.build();
 
 
-`uvm_info({my_name,":: build"},$sformatf("size of tx buffer descripters %0d",buff_d_tx.size()),UVM_DEBUG)
-for (int i=0;i <= buff_d_tx.size() - 1;i++) begin //{
-$sformat(s,"buff_d_tx[%0d]",i);
-buff_d_tx[i] = tx_buf_des::type_id::create(s);
-buff_d_tx[i].configure(this,null,"");
-buff_d_tx[i].build();
-`uvm_info({my_name,":: build"},$sformatf("created and built %s",s),UVM_DEBUG)
+//`uvm_info({my_name,":: build"},$sformatf("size of tx buffer descripters %0d",buff_d_tx.size()),UVM_DEBUG)
+
+
+for (int i=0;i <= buff_d_tx_reg.size() - 1;i++) begin //{
+$sformat(s,"buff_d_tx_reg[%0d]",i);
+buff_d_tx_reg[i] = tx_buf_des::type_id::create(s);
+buff_d_tx_reg[i].configure(this,null,"");
+buff_d_tx_reg[i].build();
+//`uvm_info({my_name,":: build"},$sformatf("created and built %s",s),UVM_DEBUG)
 end //}
+
+for (int i=0;i<= tx_pntr_reg.size() - 1;i++) begin //{
+$sformat(s,"tx_pntr[%0d]",i);
+tx_pntr_reg[i] = pntr::type_id::create(s);
+tx_pntr_reg[i].configure(this,null,"");
+tx_pntr_reg[i].build();
+end //}
+
+
+for(int i=0;i<= buff_d_rx_reg.size() - 1;i++) begin //{
+$sformat(s,"buff_d_rx_reg[%0d]",i);
+buff_d_rx_reg[i] = rx_buf_des::type_id::create(s);
+buff_d_rx_reg[i].configure(this,null,"");
+buff_d_rx_reg[i].build();
+end //}
+
+for (int i=0;i<= rx_pntr_reg.size() - 1;i++) begin //{
+$sformat(s,"rx_pntr_reg[%0d]",i);
+rx_pntr_reg[i] = pntr::type_id::create(s);
+rx_pntr_reg[i].configure(this,null,"");
+rx_pntr_reg[i].build();
+end //}
+
 	
 
 
@@ -248,6 +274,27 @@ ETH_map.add_reg(moder_reg,32'h00000000,"RW");
 ETH_map.add_reg(tx_bd_num_reg,32'h00000020,"RW");
 ETH_map.add_reg(miimoder_reg,32'h00000028,"RW");
 ETH_map.add_reg(miistatus_reg,32'h0000003C,"RW");
+
+
+for(int i=0;i<=buff_d_tx_reg.size() - 1;i++) begin //{
+ETH_map.add_reg(buff_d_tx_reg[i],BD_ADDR,"RW");
+//`uvm_info({my_name,":: build"},$sformatf("Programming tx BD %0d at address %h",i,BD_ADDR),UVM_DEBUG)
+BD_ADDR += 32'h4;
+ETH_map.add_reg(tx_pntr_reg[i],BD_ADDR,"RW");
+//`uvm_info({my_name,":: build"},$sformatf("Programming tx ptr %0d at address %h",i,BD_ADDR),UVM_DEBUG)
+BD_ADDR += 32'h4;
+end //}
+
+for (int i=0;i<= buff_d_rx_reg.size() - 1;i++) begin //{
+ETH_map.add_reg(buff_d_rx_reg[i],BD_ADDR,"RW");
+//`uvm_info({my_name,":: build"},$sformatf("Programming rx BD %0d at address %h",i,BD_ADDR),UVM_DEBUG)
+BD_ADDR += 32'h4;
+ETH_map.add_reg(rx_pntr_reg[i],BD_ADDR,"RW");
+//`uvm_info({my_name,":: build"},$sformatf("Programming rx ptr %0d at address %h",i,BD_ADDR),UVM_DEBUG)
+BD_ADDR += 32'h4;
+end //}
+
+
 
 lock_model();
 endfunction

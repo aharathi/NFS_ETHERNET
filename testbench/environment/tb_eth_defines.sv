@@ -81,7 +81,7 @@
 `define BROADCAST_XFR          2
 `define UNICAST_WRONG_XFR      3
 
-`define ETH_BASE              32'hd0000000
+`define ETH_BASE              32'h00000000
 `define ETH_WIDTH             32'h800
 `define MEMORY_BASE           32'h2000
 `define MEMORY_WIDTH          32'h10000
