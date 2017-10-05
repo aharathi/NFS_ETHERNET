@@ -26,7 +26,7 @@ endclass
 
 function void eth_env::build_phase(uvm_phase phase);
 
-assert (uvm_config_db #(eth_env_config)::get(this,"","eth_env_config",m_env_cfg)) `uvm_info({m_name,"build_phase"},"Got the env config",UVM_DEBUG) else  `uvm_error (m_name,"build_phase eth_env_config not found ")
+assert (uvm_config_db #(eth_env_config)::get(this,"","eth_env_config",m_env_cfg)) `uvm_info({m_name,"::build_phase"},"Got the env config",UVM_DEBUG) else  `uvm_error (m_name,"build_phase eth_env_config not found ")
 
 if (m_env_cfg.has_wb_agent) begin //{
 `uvm_info({m_name,"::build_phase"},"setting up the agent config",UVM_DEBUG)

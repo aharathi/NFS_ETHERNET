@@ -213,3 +213,4 @@
 
 //////////////NEW DEFINES/////////////////////////////////
 `define NUM_BUF_D 32'h80
+`define MAC_ADD_SZ 48 

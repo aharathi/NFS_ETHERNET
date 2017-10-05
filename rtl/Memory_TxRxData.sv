@@ -2,7 +2,7 @@
 
 module Memory_TxRxData 
 (
-	ethmac_if_pins slave_port
+	ethmac_if_pins slave_port, mem_backdoor_if_pins bck_door
 );
 
 /*------------------------------------------------------------------------------------------------------
@@ -216,6 +216,12 @@ end */
 end */
 
 always_comb begin
+
+if (bck_door.write) begin //{
+RAM[bck_door.addr] = bck_door.temp_data;
+end //}
+
+
 /*   if (task_wr_data & (task_wr_adr_i inside {[0:63]})) begin  
     task_mem_wr_data = RAM[task_wr_adr_i[21:2]];
 	
@@ -233,7 +239,8 @@ always_comb begin
   end
   
   else  */
-  if (wr_sel && ~slave_port.m_wb_ack_i) begin 				// if no SEL_I is active, old value will be written
+  else begin //{
+  if (wr_sel && ~slave_port.m_wb_ack_i) begin 	//{			// if no SEL_I is active, old value will be written
 		if (slave_port.m_wb_sel_o[3])
 		  RAM[slave_port.m_wb_adr_o][31:24] = slave_port.m_wb_dat_o[31:24];
 		else if (slave_port.m_wb_sel_o[2])
@@ -242,7 +249,9 @@ always_comb begin
 		  RAM[slave_port.m_wb_adr_o][15:8]  = slave_port.m_wb_dat_o[15: 8];
 		else if (slave_port.m_wb_sel_o[0])
 		  RAM[slave_port.m_wb_adr_o][7:0]   = slave_port.m_wb_dat_o[ 7: 0];
-  end
+  end //}
+end //}
+
 end
 
 //assign task_wr_adr_i = task_wr_data?(task_wr_adr_i << 2):'bz;

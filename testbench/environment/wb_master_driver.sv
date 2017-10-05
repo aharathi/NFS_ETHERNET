@@ -7,6 +7,7 @@ class wb_driver extends uvm_driver #(wb_seq_item);
 `uvm_component_utils(wb_driver)
 
 virtual wb_master_driver_if BFM;
+virtual intr_if INTR;
 
 string my_name = "wb_driver";
 
@@ -24,7 +25,7 @@ wb_seq_item wb_seq;
 wb_sl_seq_s wb_req_s,wb_resp_s;
 
 
-BFM.wait_for_reset();
+INTR.wait_for_rst();
 
 `uvm_info({my_name,"::run_phase"},"started getting sequence items",UVM_DEBUG)
 

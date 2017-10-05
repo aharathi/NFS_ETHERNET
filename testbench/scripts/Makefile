@@ -2,9 +2,9 @@ MODE ?= puresim
 
 UVM: $(QUESTA_HOME)/verilog_src/uvm-1.1d
 
-all: work build run 
+all: work_tb build run 
 
-work:
+work_tb:
 	vlib work
 	vmap work work
 	export UVM=$(QUESTA_HOME)/verilog_src/uvm-1.1d
@@ -20,6 +20,8 @@ else
 		vlog -f tb_files.f
 		velanalyze ../../rtl/*.v
 		velanalyze ../environment/ethmac_if_pin.sv
+		velanalyze ../emvironment/intr_if.sv
+		velanalyze ../environment/mem_backdoor_if.sv
 		velanalyze ../environment/wishbone_package.sv
 		velanalyze +incdir+$(VMW_HOME)/tbx/questa/hdl/ ../environment/wishbone_ms_driver_bfm.sv
 		velanalyze ../environment/wishbone_ms_driver_bfm.sv
@@ -39,9 +41,11 @@ run:
 	#vsim -c -do "run -all" hdl_top hvl_top +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_PHASE_TRACE +UVM_OBJECTION_TRACE +UVM_CONFIG_DB_TRACE
 	#vsim -c -do "run -all" hdl_top hvl_top +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_PHASE_TRACE +UVM_OBJECTION_TRACE
 ifeq ($(MODE),puresim)
-	vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
+	#vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
+	vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
 else 
-	vsim -novopt -c -do  "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE
+	#vsim -novopt -c -do  "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE
+	vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
 endif
 
 clean:

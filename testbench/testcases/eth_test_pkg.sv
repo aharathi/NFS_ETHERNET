@@ -10,6 +10,7 @@ import eth_seq_pkg::*;
 
 `include "eth_base_test.sv"
 `include "eth_reg_test.sv"
+`include "eth_mac_test.sv"
 
 endpackage
 

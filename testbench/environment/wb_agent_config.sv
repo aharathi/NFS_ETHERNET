@@ -7,6 +7,8 @@ class wb_agent_config extends uvm_object;
 localparam string cfg_id_s = "wb_agent_config";
 
 virtual wb_master_driver_if WB_BFM;
+virtual intr_if DELAY_IF;
+virtual mem_bckdoor_dr MEM_DR;
 
 uvm_active_passive_enum active = UVM_ACTIVE;
 

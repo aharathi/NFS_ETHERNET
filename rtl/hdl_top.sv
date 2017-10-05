@@ -9,11 +9,15 @@ logic clk,clk_tx,clk_rx;
 logic rst;
 
 ethmac_if_pins ethmac_pif (clk,clk_tx,clk_rx,rst);
+intr_if INTR(clk,rst,ethmac_pif.int_o);
 
 ethmac DUT_EMAC(ethmac_pif.eth_mp);
 
-Memory_TxRxData Mem_Slave(ethmac_pif.wb_slave_mem);
+mem_backdoor_if_pins mem_bckdr (clk);
 
+Memory_TxRxData Mem_Slave(ethmac_pif.wb_slave_mem,mem_bckdr.mem_bckdr_mp_slv);
+
+mem_bckdoor_dr mem_bckdoor_drv(mem_bckdr.mem_bckdr_mp_ms);
 //wb_driver_xif wb_drxif(ethmac_pif.wb_host_dr_mp); 
 wb_master_driver_if wb_ms_drif(ethmac_pif.wb_slave_mp);
 
@@ -63,15 +67,15 @@ end
 
 
 //setting virtual interface 
-initial begin  //tbx vif_binding_block
-import uvm_pkg::*;
-
-
-//set diver BFM //%m = hdl_top 
-uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif);
-
-
-end 
+//initial begin  //tbx vif_binding_block
+//import uvm_pkg::*;
+//
+//
+////set diver BFM //%m = hdl_top 
+//uvm_config_db #(virtual wb_master_driver_if)::set(null,"uvm_test_top",$psprintf("%m.WB_DRIVER"),wb_ms_drif);
+//
+//
+//end 
 
 
 endmodule 

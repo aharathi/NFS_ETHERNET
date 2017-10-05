@@ -12,8 +12,12 @@ import wb_struct_pkg::*;
 import eth_reg_pkg::*;
 //import xtlm_pkg::*;
 
+//`include "intr_if.sv"
+//`include "mem_backdoor_if.sv"
+`include "eth_mac_pkt.sv"
 `include "wb_seq_item.sv"
 `include "wb_master_driver.sv"
+`include "mem_drv.sv"
 `include "wb_agent_config.sv"
 `include "wb_master_agent.sv"
 `include "eth_env_config.sv"
