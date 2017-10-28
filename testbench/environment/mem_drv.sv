@@ -21,10 +21,12 @@ bit pkt_stream[$];
 int pkt_num=0;
 int num_writes = 0;
 static integer unsigned addr=0;
-logic `WB_DATA_TYPE mem_data[9:0];
+//logic `WB_DATA_TYPE mem_data[9:0];
+//logic `WB_DATA_TYPE [9:0] mem_data;
+logic [9:0] `WB_DATA_TYPE mem_data;
 
 
-INTR.wait_for_rst();
+//INTR.wait_for_rst();
 
 
 `uvm_info({m_name,"::run_phase"},"started getting sequence items",UVM_DEBUG)
@@ -32,16 +34,17 @@ INTR.wait_for_rst();
 forever begin //{
 seq_item_port.get_next_item(e_mac_pkt);
 pkt_num++;
+
 phase.raise_objection(this,"getting ETHERNET MAC PACKET");
 `uvm_info({m_name,":run_phase"},$sformatf("Received packet number %0d %s",pkt_num,e_mac_pkt.conv2str()),UVM_DEBUG)
 eth_mac_conv::from_class(e_mac_pkt,pkt_stream);
 `uvm_info({m_name,":run_phase"},$sformatf("pkt stream size is %0d",pkt_stream.size()),UVM_DEBUG)
 num_writes = (pkt_stream.size()/320);
-`uvm_info({m_name,":run_phase"},$sformatf("num writes is %0d",num_writes),UVM_DEBUG)
+`uvm_info({m_name,":run_phase"},$sformatf("num writes is %0d addr is %0h",num_writes,addr),UVM_DEBUG)
 for (int j = 0;j < num_writes;j++)begin //{
 for (int i = 0;i < 10;i++) begin //{
 mem_data[i] = {>>{pkt_stream[(i*`WB_DATA_WIDTH):(((i+1)*32) - 1)]}};
-`uvm_info({m_name,":run_phase"},$sformatf("Memory data is %0h",mem_data[i]),UVM_DEBUG)
+//`uvm_info({m_name,":run_phase"},$sformatf("Memory data is %0h",mem_data[i]),UVM_DEBUG)
 end //}
 MEM_DR.write(mem_data,addr);
 addr += 32'd10;
@@ -54,7 +57,7 @@ integer unsigned num_rem_writes = (pkt_stream.size()/`WB_DATA_WIDTH);
 `uvm_info({m_name,":run_phase"},$sformatf("num rem writes is %0d",num_rem_writes),UVM_DEBUG)
 for (int i=0;i< num_rem_writes;i++) begin //{
 mem_data[i] = {>>{pkt_stream[(i*`WB_DATA_WIDTH):(((i+1)*32) - 1)]}};
-`uvm_info({m_name,":run_phase"},$sformatf("Memory data is %0h",mem_data[i]),UVM_DEBUG)
+//`uvm_info({m_name,":run_phase"},$sformatf("Memory data is %0h",mem_data[i]),UVM_DEBUG)
 pkt_stream = pkt_stream[(num_rem_writes*`WB_DATA_WIDTH):$];
 end //}
 addr += num_rem_writes;

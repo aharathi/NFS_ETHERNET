@@ -15,8 +15,10 @@ endfunction
 
 virtual function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op rw);
 wb_seq_item wb_signal = wb_seq_item::type_id::create("wb_signal");
-wb_signal.wb_dat_i = rw.addr;
-wb_signal.wb_adr_i = rw.data;
+//wb_signal.wb_dat_i = rw.addr;
+//wb_signal.wb_adr_i = rw.data;
+wb_signal.wb_dat_i = rw.data;
+wb_signal.wb_adr_i = rw.addr;
 wb_signal.wb_we_i  = (rw.kind == UVM_WRITE)?WRITE:READ;
 return wb_signal;
 endfunction

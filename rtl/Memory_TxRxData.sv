@@ -28,12 +28,17 @@ logic                  task_wr_data;		//From UVM Tb, to start loading data, this
 logic                  task_data_written;	//completion of write data.
 
 // assign registers to default state while in reset
-always_ff@(posedge slave_port.wb_rst_i) begin
+always_ff@(posedge slave_port.wb_clk_i or posedge slave_port.wb_rst_i) begin
 	if (slave_port.wb_rst_i) begin
 		a_e_r_resp <= 3'b000; // do not respond
 		wait_cyc   <= 4'b0; // no wait cycles
 		max_retry  <= 8'h0; // no retries
 	end
+	else begin 
+		a_e_r_resp <= 3'b100; // do not respond
+		wait_cyc   <= 4'h2; // no wait cycles
+		max_retry  <= 8'h2; // no retries
+	end 
 end //reset
 
 
@@ -60,7 +65,13 @@ always_ff@(posedge slave_port.wb_rst_i or posedge slave_port.wb_clk_i) begin
   end
 end
 
-always_ff@(posedge retry_cnt or posedge max_retry) begin
+//always_ff@(posedge retry_cnt or posedge max_retry) begin
+always_ff@(posedge slave_port.wb_rst_i or posedge slave_port.wb_clk_i) begin
+if ( slave_port.wb_rst_i) begin
+retry_num = 'b0;
+retry_expired = 1'b0;
+end 
+else begin 
   if (retry_cnt < max_retry)  begin
     retry_num = retry_cnt + 1'b1;
     retry_expired = 1'b0;
@@ -69,6 +80,7 @@ always_ff@(posedge retry_cnt or posedge max_retry) begin
     retry_num = retry_cnt;
     retry_expired = 1'b1;
   end
+end
 end
 
 // Wait counter

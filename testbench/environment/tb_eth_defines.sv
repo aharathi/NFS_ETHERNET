@@ -121,27 +121,27 @@
 
 
 /* Register space */
-`define ETH_MODER      `ETH_BASE + 32'h00	/* Mode Register */
-`define ETH_INT        `ETH_BASE + 32'h04	/* Interrupt Source Register */
-`define ETH_INT_MASK   `ETH_BASE + 32'h08 /* Interrupt Mask Register */
-`define ETH_IPGT       `ETH_BASE + 32'h0C /* Back to Bak Inter Packet Gap Register */
-`define ETH_IPGR1      `ETH_BASE + 32'h10 /* Non Back to Back Inter Packet Gap Register 1 */
-`define ETH_IPGR2      `ETH_BASE + 32'h14 /* Non Back to Back Inter Packet Gap Register 2 */
-`define ETH_PACKETLEN  `ETH_BASE + 32'h18 /* Packet Length Register (min. and max.) */
-`define ETH_COLLCONF   `ETH_BASE + 32'h1C /* Collision and Retry Configuration Register */
-`define ETH_TX_BD_NUM  `ETH_BASE + 32'h20 /* Transmit Buffer Descriptor Number Register */
-`define ETH_CTRLMODER  `ETH_BASE + 32'h24 /* Control Module Mode Register */
-`define ETH_MIIMODER   `ETH_BASE + 32'h28 /* MII Mode Register */
-`define ETH_MIICOMMAND `ETH_BASE + 32'h2C /* MII Command Register */
-`define ETH_MIIADDRESS `ETH_BASE + 32'h30 /* MII Address Register */
-`define ETH_MIITX_DATA `ETH_BASE + 32'h34 /* MII Transmit Data Register */
-`define ETH_MIIRX_DATA `ETH_BASE + 32'h38 /* MII Receive Data Register */
-`define ETH_MIISTATUS  `ETH_BASE + 32'h3C /* MII Status Register */
-`define ETH_MAC_ADDR0  `ETH_BASE + 32'h40 /* MAC Individual Address Register 0 */
-`define ETH_MAC_ADDR1  `ETH_BASE + 32'h44 /* MAC Individual Address Register 1 */
-`define ETH_HASH_ADDR0 `ETH_BASE + 32'h48 /* Hash Register 0 */
-`define ETH_HASH_ADDR1 `ETH_BASE + 32'h4C /* Hash Register 1 */
-`define ETH_TX_CTRL    `ETH_BASE + 32'h50 /* Tx Control Register */
+`define ETH_MODER      32'h00	/* Mode Register */
+`define ETH_INT        32'h04	/* Interrupt Source Register */
+`define ETH_INT_MASK   32'h08 /* Interrupt Mask Register */
+`define ETH_IPGT       32'h0C /* Back to Bak Inter Packet Gap Register */
+`define ETH_IPGR1      32'h10 /* Non Back to Back Inter Packet Gap Register 1 */
+`define ETH_IPGR2      32'h14 /* Non Back to Back Inter Packet Gap Register 2 */
+`define ETH_PACKETLEN  32'h18 /* Packet Length Register (min. and max.) */
+`define ETH_COLLCONF   32'h1C /* Collision and Retry Configuration Register */
+`define ETH_TX_BD_NUM  32'h20 /* Transmit Buffer Descriptor Number Register */
+`define ETH_CTRLMODER  32'h24 /* Control Module Mode Register */
+`define ETH_MIIMODER   32'h28 /* MII Mode Register */
+`define ETH_MIICOMMAND 32'h2C /* MII Command Register */
+`define ETH_MIIADDRESS 32'h30 /* MII Address Register */
+`define ETH_MIITX_DATA 32'h34 /* MII Transmit Data Register */
+`define ETH_MIIRX_DATA 32'h38 /* MII Receive Data Register */
+`define ETH_MIISTATUS  32'h3C /* MII Status Register */
+`define ETH_MAC_ADDR0  32'h40 /* MAC Individual Address Register 0 */
+`define ETH_MAC_ADDR1  32'h44 /* MAC Individual Address Register 1 */
+`define ETH_HASH_ADDR0 32'h48 /* Hash Register 0 */
+`define ETH_HASH_ADDR1 32'h4C /* Hash Register 1 */
+`define ETH_TX_CTRL    32'h50 /* Tx Control Register */
 
 
 /* MODER Register */
@@ -213,4 +213,5 @@
 
 //////////////NEW DEFINES/////////////////////////////////
 `define NUM_BUF_D 32'h80
-`define MAC_ADD_SZ 48 
+`define MAC_ADD_SZ 48
+`define BD_PNT_LEN 32

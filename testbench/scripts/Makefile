@@ -20,7 +20,7 @@ else
 		vlog -f tb_files.f
 		velanalyze ../../rtl/*.v
 		velanalyze ../environment/ethmac_if_pin.sv
-		velanalyze ../emvironment/intr_if.sv
+		velanalyze ../environment/intr_if.sv
 		velanalyze ../environment/mem_backdoor_if.sv
 		velanalyze ../environment/wishbone_package.sv
 		velanalyze +incdir+$(VMW_HOME)/tbx/questa/hdl/ ../environment/wishbone_ms_driver_bfm.sv
@@ -42,10 +42,13 @@ run:
 	#vsim -c -do "run -all" hdl_top hvl_top +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_PHASE_TRACE +UVM_OBJECTION_TRACE
 ifeq ($(MODE),puresim)
 	#vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
-	vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
+	#vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
+	vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_INFO +TX_BD_NUM=32
 else 
 	#vsim -novopt -c -do  "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_reg_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE
-	vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
+	#vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_DEBUG +UVM_OBJECTION_TRACE +TX_BD_NUM=32
+	#vsim -novopt  -c -do "run -all" +tbxrun+ hdl_top hvl_top TbxSvManager +velrun+ +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_INFO +UVM_OBJECTION_TRACE +TX_BD_NUM=32
+	vsim -novopt  -c -do "run -all" hdl_top hvl_top TbxSvManager +UVM_TESTNAME=eth_mac_test +UVM_VERBOSITY=UVM_INFO +TX_BD_NUM=32
 endif
 
 clean:

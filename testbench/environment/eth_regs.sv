@@ -213,7 +213,7 @@ endfunction
 virtual function void build();
 
 string s;
-int unsigned BD_ADDR = `TX_BD_BASE;
+int unsigned BD_ADDR;
 
 moder_reg = moder::type_id::create("MODER");
 moder_reg.configure(this,null,"");				//"" : to fill the HW Register HDL Path
@@ -268,14 +268,21 @@ end //}
 	
 
 
-ETH_map = create_map("ETH_map",'h0,4,UVM_LITTLE_ENDIAN);
+//ETH_map = create_map("ETH_map",'h0,4,UVM_LITTLE_ENDIAN);
+//
+//ETH_map.add_reg(moder_reg,32'h00000000,"RW");
+//ETH_map.add_reg(tx_bd_num_reg,32'h00000020,"RW");
+//ETH_map.add_reg(miimoder_reg,32'h00000028,"RW");
+//ETH_map.add_reg(miistatus_reg,32'h0000003C,"RW");
 
-ETH_map.add_reg(moder_reg,32'h00000000,"RW");
-ETH_map.add_reg(tx_bd_num_reg,32'h00000020,"RW");
-ETH_map.add_reg(miimoder_reg,32'h00000028,"RW");
-ETH_map.add_reg(miistatus_reg,32'h0000003C,"RW");
+ETH_map = create_map("ETH_map",`ETH_BASE,4,UVM_LITTLE_ENDIAN);
 
+ETH_map.add_reg(moder_reg,`ETH_MODER,"RW");
+ETH_map.add_reg(tx_bd_num_reg,`ETH_TX_BD_NUM,"RW");
+ETH_map.add_reg(miimoder_reg,`ETH_MIIMODER,"RW");
+ETH_map.add_reg(miistatus_reg,`ETH_MIISTATUS,"RW");
 
+BD_ADDR = `TX_BD_BASE;
 for(int i=0;i<=buff_d_tx_reg.size() - 1;i++) begin //{
 ETH_map.add_reg(buff_d_tx_reg[i],BD_ADDR,"RW");
 //`uvm_info({my_name,":: build"},$sformatf("Programming tx BD %0d at address %h",i,BD_ADDR),UVM_DEBUG)

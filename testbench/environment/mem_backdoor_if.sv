@@ -27,8 +27,11 @@ mem_bck.read = 1'b0;
 end
 
 
-task write (input logic `WB_DATA_TYPE data[9:0],input logic `WB_ADDR_TYPE addr); //pragma tbx xtf
+//task write (input logic `WB_DATA_TYPE data[9:0],input logic `WB_ADDR_TYPE addr); //pragma tbx xtf
+//task write (input logic `WB_DATA_TYPE [9:0] data,input logic `WB_ADDR_TYPE addr); //pragma tbx xtf
+task write (input logic [9:0] `WB_DATA_TYPE data,input logic `WB_ADDR_TYPE addr); //pragma tbx xtf
 
+@(posedge mem_bck.wb_clk);
 for (int i=0;i<=9;i++) begin //{
 @(posedge mem_bck.wb_clk);
 mem_bck.write <= 1'b1;
